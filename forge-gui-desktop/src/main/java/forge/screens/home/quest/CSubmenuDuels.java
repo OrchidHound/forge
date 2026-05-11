@@ -14,8 +14,6 @@ import forge.gamemodes.quest.QuestEventDuel;
 import forge.gamemodes.quest.QuestUtil;
 import forge.gamemodes.quest.bazaar.QuestPetController;
 import forge.gamemodes.quest.data.QuestAchievements;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
 import forge.gui.UiCommand;
 import forge.gui.framework.ICDoc;
 import forge.model.FModel;
@@ -190,48 +188,35 @@ public enum CSubmenuDuels implements ICDoc {
 			sb.append(localizer.getMessage("lblMatchBestof")).append(" ").append(FModel.getQuest().getMatchLength());
 			view.getCbxMatchLength().setSelectedItem(sb.toString());
 
-			// Debug panel for testing
-			JPanel debugPanel = new JPanel(new net.miginfocom.swing.MigLayout("insets 4, gap 4"));
-			debugPanel.setBorder(BorderFactory.createTitledBorder("Test Controls"));
-			debugPanel.setOpaque(false);
+			final javax.swing.JButton btnTest = new javax.swing.JButton("[Test]");
+			btnTest.addActionListener(e -> {
+				javax.swing.JPopupMenu testMenu = new javax.swing.JPopupMenu();
 
-			javax.swing.JButton btnTestBoss = new javax.swing.JButton("[Test] Trigger Boss");
-			btnTestBoss.addActionListener(e -> {
-				achievements.debugTriggerBoss();
-				FModel.getQuest().save();
-				CSubmenuDuels.this.update();
-			});
-			javax.swing.JButton btnTestFinalBoss = new javax.swing.JButton("[Test] Trigger Final Boss");
-			btnTestFinalBoss.addActionListener(e -> {
-				achievements.debugTriggerFinalBoss();
-				FModel.getQuest().save();
-				CSubmenuDuels.this.update();
-			});
-			javax.swing.JButton btnResetRun = new javax.swing.JButton("[Test] Reset Quest Run");
-			btnResetRun.addActionListener(e -> {
-				achievements.debugResetQuestRun();
-				FModel.getQuest().save();
-				CSubmenuDuels.this.update();
-			});
-			javax.swing.JButton btnAddCredits = new javax.swing.JButton("[Test] Add 10000 Credits");
-			btnAddCredits.addActionListener(e -> {
-				FModel.getQuest().getAssets().addCredits(10000);
-				FModel.getQuest().save();
-				CSubmenuDuels.this.update();
-			});
-			javax.swing.JButton btnAddToken = new javax.swing.JButton("[Test] Add Tournament Token");
-			btnAddToken.addActionListener(e -> {
-				achievements.addDraftToken();
-				FModel.getQuest().save();
-				CSubmenuDuels.this.update();
-			});
+				javax.swing.JMenuItem itemBoss = new javax.swing.JMenuItem("Trigger Boss");
+				itemBoss.addActionListener(ae -> { achievements.debugTriggerBoss(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
+				testMenu.add(itemBoss);
 
-			debugPanel.add(btnTestBoss);
-			debugPanel.add(btnTestFinalBoss);
-			debugPanel.add(btnResetRun);
-			debugPanel.add(btnAddCredits);
-			debugPanel.add(btnAddToken);
-			view.getPnlDuels().add(debugPanel, "w 100%!, gaptop 12px");
+				javax.swing.JMenuItem itemFinalBoss = new javax.swing.JMenuItem("Trigger Final Boss");
+				itemFinalBoss.addActionListener(ae -> { achievements.debugTriggerFinalBoss(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
+				testMenu.add(itemFinalBoss);
+
+				javax.swing.JMenuItem itemReset = new javax.swing.JMenuItem("Reset Quest Run");
+				itemReset.addActionListener(ae -> { achievements.debugResetQuestRun(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
+				testMenu.add(itemReset);
+
+				testMenu.addSeparator();
+
+				javax.swing.JMenuItem itemCredits = new javax.swing.JMenuItem("Add 10000 Credits");
+				itemCredits.addActionListener(ae -> { FModel.getQuest().getAssets().addCredits(10000); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
+				testMenu.add(itemCredits);
+
+				javax.swing.JMenuItem itemToken = new javax.swing.JMenuItem("Add Tournament Token");
+				itemToken.addActionListener(ae -> { achievements.addDraftToken(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
+				testMenu.add(itemToken);
+
+				testMenu.show(btnTest, 0, btnTest.getHeight());
+			});
+			view.getPnlDuels().add(btnTest, "gaptop 12px");
 		}
 	}
 

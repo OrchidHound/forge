@@ -60,41 +60,48 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
     });
     private static final FMenuItem prefsItem = new FMenuItem(Forge.getLocalizer().getMessage("Preferences"), Forge.hdbuttons ? FSkinImage.HDPREFERENCE : FSkinImage.SETTINGS, event -> setCurrentScreen(prefsScreen));
 
-    private static final FMenuItem testBossItem = new FMenuItem("[Test] Trigger Boss", FSkinImage.QUEST_BIG_SWORD, event -> {
-        if (FModel.getQuest().getAchievements() != null) {
-            FModel.getQuest().getAchievements().debugTriggerBoss();
-            FModel.getQuest().save();
-            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+    private static final FPopupMenu testMenu = new FPopupMenu() {
+        @Override
+        protected void buildMenu() {
+            addItem(new FMenuItem("Trigger Boss", FSkinImage.QUEST_BIG_SWORD, event -> {
+                if (FModel.getQuest().getAchievements() != null) {
+                    FModel.getQuest().getAchievements().debugTriggerBoss();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
+            addItem(new FMenuItem("Trigger Final Boss", FSkinImage.QUEST_BIG_SWORD, event -> {
+                if (FModel.getQuest().getAchievements() != null) {
+                    FModel.getQuest().getAchievements().debugTriggerFinalBoss();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
+            addItem(new FMenuItem("Reset Quest Run", FSkinImage.QUEST_BIG_SWORD, event -> {
+                if (FModel.getQuest().getAchievements() != null) {
+                    FModel.getQuest().getAchievements().debugResetQuestRun();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
+            addItem(new FMenuItem("Add 10000 Credits", FSkinImage.QUEST_GOLD, event -> {
+                if (FModel.getQuest().getAssets() != null) {
+                    FModel.getQuest().getAssets().addCredits(10000);
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
+            addItem(new FMenuItem("Add Tournament Token", FSkinImage.QUEST_NOTES, event -> {
+                if (FModel.getQuest().getAchievements() != null) {
+                    FModel.getQuest().getAchievements().addDraftToken();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
         }
-    });
-    private static final FMenuItem testFinalBossItem = new FMenuItem("[Test] Trigger Final Boss", FSkinImage.QUEST_BIG_SWORD, event -> {
-        if (FModel.getQuest().getAchievements() != null) {
-            FModel.getQuest().getAchievements().debugTriggerFinalBoss();
-            FModel.getQuest().save();
-            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
-        }
-    });
-    private static final FMenuItem testResetRunItem = new FMenuItem("[Test] Reset Quest Run", FSkinImage.QUEST_BIG_SWORD, event -> {
-        if (FModel.getQuest().getAchievements() != null) {
-            FModel.getQuest().getAchievements().debugResetQuestRun();
-            FModel.getQuest().save();
-            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
-        }
-    });
-    private static final FMenuItem testAddCreditsItem = new FMenuItem("[Test] Add 10000 Credits", FSkinImage.QUEST_GOLD, event -> {
-        if (FModel.getQuest().getAssets() != null) {
-            FModel.getQuest().getAssets().addCredits(10000);
-            FModel.getQuest().save();
-            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
-        }
-    });
-    private static final FMenuItem testAddTokenItem = new FMenuItem("[Test] Add Tournament Token", FSkinImage.QUEST_NOTES, event -> {
-        if (FModel.getQuest().getAchievements() != null) {
-            FModel.getQuest().getAchievements().addDraftToken();
-            FModel.getQuest().save();
-            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
-        }
-    });
+    };
+    private static final FMenuItem testMenuItem = new FMenuItem("[Test]", FSkinImage.QUEST_BIG_SWORD, event ->
+            testMenu.show(event.getSource(), 0, event.getSource().getHeight()));
 
     static {
         statsScreen.addTournamentResultsLabels(tournamentsScreen);
@@ -213,11 +220,7 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
             addItem(travelItem);
         addItem(statsItem); statsItem.setSelected(currentScreen == statsScreen);
         addItem(prefsItem); prefsItem.setSelected(currentScreen == prefsScreen);
-        addItem(testBossItem);
-        addItem(testFinalBossItem);
-        addItem(testResetRunItem);
-        addItem(testAddCreditsItem);
-        addItem(testAddTokenItem);
+        addItem(testMenuItem);
     }
 
     @Override
