@@ -81,6 +81,20 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
             FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
         }
     });
+    private static final FMenuItem testAddCreditsItem = new FMenuItem("[Test] Add 10000 Credits", FSkinImage.QUEST_GOLD, event -> {
+        if (FModel.getQuest().getAssets() != null) {
+            FModel.getQuest().getAssets().addCredits(10000);
+            FModel.getQuest().save();
+            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+        }
+    });
+    private static final FMenuItem testAddTokenItem = new FMenuItem("[Test] Add Tournament Token", FSkinImage.QUEST_NOTES, event -> {
+        if (FModel.getQuest().getAchievements() != null) {
+            FModel.getQuest().getAchievements().addDraftToken();
+            FModel.getQuest().save();
+            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+        }
+    });
 
     static {
         statsScreen.addTournamentResultsLabels(tournamentsScreen);
@@ -202,6 +216,8 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
         addItem(testBossItem);
         addItem(testFinalBossItem);
         addItem(testResetRunItem);
+        addItem(testAddCreditsItem);
+        addItem(testAddTokenItem);
     }
 
     @Override

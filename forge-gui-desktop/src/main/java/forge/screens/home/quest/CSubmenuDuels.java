@@ -190,9 +190,9 @@ public enum CSubmenuDuels implements ICDoc {
 			sb.append(localizer.getMessage("lblMatchBestof")).append(" ").append(FModel.getQuest().getMatchLength());
 			view.getCbxMatchLength().setSelectedItem(sb.toString());
 
-			// Debug panel for testing boss encounters
+			// Debug panel for testing
 			JPanel debugPanel = new JPanel(new net.miginfocom.swing.MigLayout("insets 4, gap 4"));
-			debugPanel.setBorder(BorderFactory.createTitledBorder("Test Boss Encounters"));
+			debugPanel.setBorder(BorderFactory.createTitledBorder("Test Controls"));
 			debugPanel.setOpaque(false);
 
 			javax.swing.JButton btnTestBoss = new javax.swing.JButton("[Test] Trigger Boss");
@@ -213,10 +213,24 @@ public enum CSubmenuDuels implements ICDoc {
 				FModel.getQuest().save();
 				CSubmenuDuels.this.update();
 			});
+			javax.swing.JButton btnAddCredits = new javax.swing.JButton("[Test] Add 10000 Credits");
+			btnAddCredits.addActionListener(e -> {
+				FModel.getQuest().getAssets().addCredits(10000);
+				FModel.getQuest().save();
+				CSubmenuDuels.this.update();
+			});
+			javax.swing.JButton btnAddToken = new javax.swing.JButton("[Test] Add Tournament Token");
+			btnAddToken.addActionListener(e -> {
+				achievements.addDraftToken();
+				FModel.getQuest().save();
+				CSubmenuDuels.this.update();
+			});
 
 			debugPanel.add(btnTestBoss);
 			debugPanel.add(btnTestFinalBoss);
 			debugPanel.add(btnResetRun);
+			debugPanel.add(btnAddCredits);
+			debugPanel.add(btnAddToken);
 			view.getPnlDuels().add(debugPanel, "w 100%!, gaptop 12px");
 		}
 	}
