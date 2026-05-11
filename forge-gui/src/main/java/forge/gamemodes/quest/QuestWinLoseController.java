@@ -109,6 +109,23 @@ public class QuestWinLoseController {
 
             if (matchIsNotOver) { return; } //skip remaining logic if match isn't over yet
 
+            // Boss encounter messaging
+            if (qEvent instanceof QuestBossEvent bossEvent) {
+                if (wonMatch) {
+                    if (bossEvent.isFinalBoss()) {
+                        view.showMessage("QUEST COMPLETE!\n\nYou have defeated the Final Boss and conquered the quest run! You may continue playing quest mode normally.", "Quest Complete!", FSkinProp.ICO_QUEST_COIN);
+                    } else {
+                        view.showMessage("Boss " + bossEvent.getBossNumber() + " defeated!\n\nYou have overcome the Boss. Continue your journey and face even greater challenges ahead.", "Boss Defeated!", FSkinProp.ICO_QUEST_COIN);
+                    }
+                } else {
+                    if (bossEvent.isFinalBoss()) {
+                        view.showMessage("The Final Boss has defeated you.\n\nYour quest run has ended. Start a new quest to try again.", "Quest Run Over", FSkinProp.ICO_QUEST_HEART);
+                    } else {
+                        view.showMessage("Boss " + bossEvent.getBossNumber() + " has defeated you.\n\nYour quest run has ended. You cannot continue this quest run. Start a new quest to try again.", "Quest Run Over", FSkinProp.ICO_QUEST_HEART);
+                    }
+                }
+            }
+
             // TODO: We don't have a enum for difficulty?
             final int difficulty = qData.getAchievements().getDifficulty();
 
@@ -174,29 +191,44 @@ public class QuestWinLoseController {
     public void actionOnQuit() {
         final int x = FModel.getQuestPreferences().getPrefInt(QPref.PENALTY_LOSS);
 
-        // Record win/loss in quest data
-        if (wonMatch) {
-            qData.getAchievements().addWin();
-        }
-        else {
-            qData.getAchievements().addLost();
-            qData.getAssets().subtractCredits(x);
+        if (qEvent instanceof QuestBossEvent bossEvent) {
+            // Boss event: handle win/loss and update boss state
+            if (wonMatch) {
+                qData.getAchievements().addWin();
+                qData.getAchievements().setBossEventPending(false);
+                if (bossEvent.isFinalBoss()) {
+                    qData.getAchievements().setQuestCompleted(true);
+                }
+            } else {
+                qData.getAchievements().addLost();
+                qData.getAssets().subtractCredits(x);
+                qData.getAchievements().setQuestRunOver(true);
+            }
+        } else {
+            // Regular event: record win/loss and track toward next boss encounter
+            if (wonMatch) {
+                qData.getAchievements().addWin();
+            } else {
+                qData.getAchievements().addLost();
+                qData.getAssets().subtractCredits(x);
+            }
+            qData.getAchievements().incrementRegularEventsPlayed();
+
+            if (qEvent instanceof QuestEventChallenge) {
+                if (wonMatch || (!((QuestEventChallenge)qEvent).isPersistent())) {
+                    final String id = ((QuestEventChallenge) qEvent).getId();
+                    qData.getAchievements().getCurrentChallenges().remove(id);
+                    qData.getAchievements().addLockedChallenge(id);
+
+                    // Increment challenge counter to limit challenges available
+                    qData.getAchievements().addChallengesPlayed();
+                }
+            }
         }
 
         // Reset cards and zeppelin use
         if (qData.getAssets().hasItem(QuestItemType.ZEPPELIN)) {
             qData.getAssets().setItemLevel(QuestItemType.ZEPPELIN, 1);
-        }
-
-        if (qEvent instanceof QuestEventChallenge) {
-            if (wonMatch || (!((QuestEventChallenge)qEvent).isPersistent())) {
-                final String id = ((QuestEventChallenge) qEvent).getId();
-                qData.getAchievements().getCurrentChallenges().remove(id);
-                qData.getAchievements().addLockedChallenge(id);
-
-                // Increment challenge counter to limit challenges available
-                qData.getAchievements().addChallengesPlayed();
-            }
         }
 
         qData.setCurrentEvent(null);

@@ -13,6 +13,9 @@ import forge.gamemodes.quest.QuestController;
 import forge.gamemodes.quest.QuestEventDuel;
 import forge.gamemodes.quest.QuestUtil;
 import forge.gamemodes.quest.bazaar.QuestPetController;
+import forge.gamemodes.quest.data.QuestAchievements;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import forge.gui.UiCommand;
 import forge.gui.framework.ICDoc;
 import forge.model.FModel;
@@ -143,30 +146,78 @@ public enum CSubmenuDuels implements ICDoc {
 
 		if (FModel.getQuest().getAchievements() != null) {
 			final Localizer localizer = Localizer.getInstance();
-			view.getLblTitle().setText(localizer.getMessage("lblDuels") + ": " + FModel.getQuest().getRank());
+			final QuestAchievements achievements = FModel.getQuest().getAchievements();
 
 			view.getPnlDuels().removeAll();
+
+			if (achievements.isQuestRunOver()) {
+				view.getLblTitle().setText("Quest Run Over - Defeated by a Boss!");
+				view.getPnlDuels().add(new javax.swing.JLabel(
+						"<html><br><br><center><b>Your quest run has ended!</b><br><br>"
+						+ "You were defeated by a Boss.<br>"
+						+ "Start a new quest to play again.</center></html>"), "w 100%!");
+				view.getPnlDuels().revalidate();
+				view.getPnlDuels().repaint();
+				return;
+			}
+
+			if (achievements.isBossEventPending()) {
+				view.getLblTitle().setText("Boss Encounter! - " + FModel.getQuest().getRank());
+			} else {
+				view.getLblTitle().setText(localizer.getMessage("lblDuels") + ": " + FModel.getQuest().getRank());
+			}
+
 			final List<QuestEventDuel> duels = FModel.getQuest().getDuelsManager().generateDuels();
 
 			final JXButtonPanel grpPanel = new JXButtonPanel();
 
-			assert duels != null;
-			for (int i = 0; i < duels.size(); i++) {
-				final PnlEvent temp = new PnlEvent(duels.get(i));
-				final JRadioButton rad = temp.getRad();
-				if (i == 0) {
-					rad.setSelected(true);
-					SwingUtilities.invokeLater(rad::requestFocusInWindow);
+			if (duels != null) {
+				for (int i = 0; i < duels.size(); i++) {
+					final PnlEvent temp = new PnlEvent(duels.get(i));
+					final JRadioButton rad = temp.getRad();
+					if (i == 0) {
+						rad.setSelected(true);
+						SwingUtilities.invokeLater(rad::requestFocusInWindow);
+					}
+					temp.addKeyListener(startOnEnter);
+					temp.addMouseListener(mouseClickListener);
+					grpPanel.add(temp, rad, "w 100%!, h 95px!, gapy 8px");
 				}
-				temp.addKeyListener(startOnEnter);
-				temp.addMouseListener(mouseClickListener);
-				grpPanel.add(temp, rad, "w 100%!, h 95px!, gapy 8px");
 			}
 			view.getPnlDuels().add(grpPanel, "w 100%!");
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(localizer.getMessage("lblMatchBestof")).append(" ").append(FModel.getQuest().getMatchLength());
 			view.getCbxMatchLength().setSelectedItem(sb.toString());
+
+			// Debug panel for testing boss encounters
+			JPanel debugPanel = new JPanel(new net.miginfocom.swing.MigLayout("insets 4, gap 4"));
+			debugPanel.setBorder(BorderFactory.createTitledBorder("Test Boss Encounters"));
+			debugPanel.setOpaque(false);
+
+			javax.swing.JButton btnTestBoss = new javax.swing.JButton("[Test] Trigger Boss");
+			btnTestBoss.addActionListener(e -> {
+				achievements.debugTriggerBoss();
+				FModel.getQuest().save();
+				CSubmenuDuels.this.update();
+			});
+			javax.swing.JButton btnTestFinalBoss = new javax.swing.JButton("[Test] Trigger Final Boss");
+			btnTestFinalBoss.addActionListener(e -> {
+				achievements.debugTriggerFinalBoss();
+				FModel.getQuest().save();
+				CSubmenuDuels.this.update();
+			});
+			javax.swing.JButton btnResetRun = new javax.swing.JButton("[Test] Reset Quest Run");
+			btnResetRun.addActionListener(e -> {
+				achievements.debugResetQuestRun();
+				FModel.getQuest().save();
+				CSubmenuDuels.this.update();
+			});
+
+			debugPanel.add(btnTestBoss);
+			debugPanel.add(btnTestFinalBoss);
+			debugPanel.add(btnResetRun);
+			view.getPnlDuels().add(debugPanel, "w 100%!, gaptop 12px");
 		}
 	}
 

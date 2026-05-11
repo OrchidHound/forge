@@ -647,6 +647,16 @@ public class QuestUtil {
             return false;
         }
 
+        final var achievements = FModel.getQuest().getAchievements();
+        if (achievements != null && achievements.isQuestRunOver()) {
+            SOptionPane.showErrorDialog("Your quest run has ended. You were defeated by a Boss.\nStart a new quest to play again.", "Quest Run Over");
+            return false;
+        }
+        if (achievements != null && achievements.isBossEventPending() && !(event instanceof QuestBossEvent)) {
+            SOptionPane.showErrorDialog("A Boss encounter is waiting! You must defeat the Boss before continuing your quest.", "Boss Encounter");
+            return false;
+        }
+
         final Deck deck = getDeckForNewGame();
         if (deck == null) {
             final String msg = localizer.getMessage("lblSelectAQuestDeck");

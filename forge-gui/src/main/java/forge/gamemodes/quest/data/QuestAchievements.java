@@ -34,6 +34,12 @@ public class QuestAchievements {
     private int winstreakCurrent = 0;
     private int lost;
 
+    // Boss encounter tracking
+    private int regularEventsPlayed = 0;
+    private boolean bossEventPending = false;
+    private boolean questCompleted = false;
+    private boolean questRunOver = false;
+
     private int firstPlaceDraftFinishes = 0;
     private int secondPlaceDraftFinishes = 0;
     private int thirdPlaceDraftFinishes = 0;
@@ -166,6 +172,41 @@ public class QuestAchievements {
     public void addLost() {
         lost++;
         winstreakCurrent = 0;
+    }
+
+    // Boss encounter methods
+    public int getRegularEventsPlayed() { return regularEventsPlayed; }
+
+    public void incrementRegularEventsPlayed() {
+        regularEventsPlayed++;
+        if (regularEventsPlayed > 0 && regularEventsPlayed % 20 == 0) {
+            bossEventPending = true;
+        }
+    }
+
+    public boolean isBossEventPending() { return bossEventPending; }
+    public void setBossEventPending(boolean pending) { bossEventPending = pending; }
+    public boolean isQuestCompleted() { return questCompleted; }
+    public void setQuestCompleted(boolean completed) { questCompleted = completed; }
+    public boolean isQuestRunOver() { return questRunOver; }
+    public void setQuestRunOver(boolean over) { questRunOver = over; }
+
+    // Debug helpers for testing boss encounters
+    public void debugTriggerBoss() {
+        regularEventsPlayed = 20;
+        bossEventPending = true;
+        questRunOver = false;
+    }
+
+    public void debugTriggerFinalBoss() {
+        regularEventsPlayed = 120;
+        bossEventPending = true;
+        questRunOver = false;
+    }
+
+    public void debugResetQuestRun() {
+        questRunOver = false;
+        bossEventPending = false;
     }
 
     // Level, read-only ( note: it increments in addWin() )

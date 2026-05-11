@@ -123,12 +123,20 @@ public class QuestEventDuelManager implements QuestEventDuelManagerInterface {
      * @return an array of {@link java.lang.String} objects.
      */
     public final List<QuestEventDuel> generateDuels() {
-        final QuestPreferences questPreferences = FModel.getQuestPreferences();
-        boolean moreDuelChoices = questPreferences.getPrefInt(QPref.MORE_DUEL_CHOICES) > 0;
-
         if (FModel.getQuest().getAchievements() == null) {
             return null;
         }
+
+        if (FModel.getQuest().getAchievements().isQuestRunOver()) {
+            return Collections.emptyList();
+        }
+
+        if (FModel.getQuest().getAchievements().isBossEventPending()) {
+            return QuestBossEvent.createBossEncounterList(this);
+        }
+
+        final QuestPreferences questPreferences = FModel.getQuestPreferences();
+        boolean moreDuelChoices = questPreferences.getPrefInt(QPref.MORE_DUEL_CHOICES) > 0;
 
         final QuestController qCtrl = FModel.getQuest();
         final int numberOfWins = qCtrl.getAchievements().getWin();

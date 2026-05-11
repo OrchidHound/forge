@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import forge.Forge;
 import forge.assets.FSkinFont;
 import forge.gamemodes.quest.QuestEventDuel;
+import forge.gamemodes.quest.data.QuestAchievements;
 import forge.gui.FThreads;
 import forge.gui.interfaces.IButton;
 import forge.model.FModel;
@@ -69,6 +70,20 @@ public class QuestDuelsScreen extends QuestLaunchScreen {
     private void generateDuels() {
         FThreads.invokeInEdtLater(() -> LoadingOverlay.show(Forge.getLocalizer().getMessage("lblLoadingCurrentQuest"), true, () -> {
             pnlDuels.clear();
+
+            QuestAchievements achievements = FModel.getQuest().getAchievements();
+            if (achievements != null && achievements.isQuestRunOver()) {
+                lblInfo.setText("Quest Run Over - You were defeated by a Boss. Start a new quest to play again.");
+                pnlDuels.revalidate();
+                return;
+            }
+
+            if (achievements != null && achievements.isBossEventPending()) {
+                lblInfo.setText("Boss Encounter! Defeat the Boss to continue your quest.");
+            } else {
+                lblInfo.setText(Forge.getLocalizer().getMessage("lblSelectNextDuel"));
+            }
+
             List<QuestEventDuel> duels = FModel.getQuest().getDuelsManager().generateDuels();
             if (duels != null) {
                 for (QuestEventDuel duel : duels) {

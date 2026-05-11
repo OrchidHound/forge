@@ -60,6 +60,28 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
     });
     private static final FMenuItem prefsItem = new FMenuItem(Forge.getLocalizer().getMessage("Preferences"), Forge.hdbuttons ? FSkinImage.HDPREFERENCE : FSkinImage.SETTINGS, event -> setCurrentScreen(prefsScreen));
 
+    private static final FMenuItem testBossItem = new FMenuItem("[Test] Trigger Boss", FSkinImage.QUEST_BIG_SWORD, event -> {
+        if (FModel.getQuest().getAchievements() != null) {
+            FModel.getQuest().getAchievements().debugTriggerBoss();
+            FModel.getQuest().save();
+            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+        }
+    });
+    private static final FMenuItem testFinalBossItem = new FMenuItem("[Test] Trigger Final Boss", FSkinImage.QUEST_BIG_SWORD, event -> {
+        if (FModel.getQuest().getAchievements() != null) {
+            FModel.getQuest().getAchievements().debugTriggerFinalBoss();
+            FModel.getQuest().save();
+            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+        }
+    });
+    private static final FMenuItem testResetRunItem = new FMenuItem("[Test] Reset Quest Run", FSkinImage.QUEST_BIG_SWORD, event -> {
+        if (FModel.getQuest().getAchievements() != null) {
+            FModel.getQuest().getAchievements().debugResetQuestRun();
+            FModel.getQuest().save();
+            FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+        }
+    });
+
     static {
         statsScreen.addTournamentResultsLabels(tournamentsScreen);
     }
@@ -177,6 +199,9 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
             addItem(travelItem);
         addItem(statsItem); statsItem.setSelected(currentScreen == statsScreen);
         addItem(prefsItem); prefsItem.setSelected(currentScreen == prefsScreen);
+        addItem(testBossItem);
+        addItem(testFinalBossItem);
+        addItem(testResetRunItem);
     }
 
     @Override

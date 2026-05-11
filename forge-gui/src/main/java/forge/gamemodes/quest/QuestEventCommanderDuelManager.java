@@ -87,6 +87,15 @@ public class QuestEventCommanderDuelManager implements QuestEventDuelManagerInte
      * @return ArrayList of QuestEventDuels containing 4 duels.
      */
     public List<QuestEventDuel> generateDuels() {
+        if (FModel.getQuest().getAchievements() != null) {
+            if (FModel.getQuest().getAchievements().isQuestRunOver()) {
+                return Collections.emptyList();
+            }
+            if (FModel.getQuest().getAchievements().isBossEventPending()) {
+                return generateCommanderBossEncounter();
+            }
+        }
+
         final List<QuestEventDuel> duelOpponents = new ArrayList<>();
 
         //While there are less than 4 duels chosen
@@ -192,6 +201,26 @@ public class QuestEventCommanderDuelManager implements QuestEventDuelManagerInte
                 if (expertList.size() == 0) break; //break if there are no more cards to copy over
             }
         }
+    }
+
+    private List<QuestEventDuel> generateCommanderBossEncounter() {
+        final int regularEventsPlayed = FModel.getQuest().getAchievements().getRegularEventsPlayed();
+        final boolean isFinalBoss = regularEventsPlayed >= 120;
+        final int bossNumber = regularEventsPlayed / 20;
+
+        QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber);
+
+        if (!commanderDuels.isEmpty()) {
+            QuestEventCommanderDuel sourceDuel = (QuestEventCommanderDuel) commanderDuels.get(
+                    MyRandom.getRandom().nextInt(commanderDuels.size()));
+            Deck bossDeck = sourceDuel.getDeckProxy().getDeck();
+            bossEvent.setEventDeck(bossDeck);
+            bossEvent.setProfile(sourceDuel.getProfile());
+            bossEvent.setIconImageKey(sourceDuel.getIconImageKey());
+            bossEvent.setOpponentName(sourceDuel.getTitle());
+        }
+
+        return Collections.singletonList(bossEvent);
     }
 
     /**
