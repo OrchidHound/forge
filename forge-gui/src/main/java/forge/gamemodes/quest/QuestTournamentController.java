@@ -60,7 +60,7 @@ public class QuestTournamentController {
             achievements.generateDrafts();
             view.setMode(Mode.SELECT_TOURNAMENT);
         }
-        else if (!achievements.getCurrentDraft().isStarted()) {
+        else if (achievements.getCurrentDraft() == null || !achievements.getCurrentDraft().isStarted()) {
             view.setMode(Mode.PREPARE_DECK);
         }
         else {
@@ -157,7 +157,11 @@ public class QuestTournamentController {
         if (saveDraft) {
             draft.saveToRegularDraft();
         }
+        final int playerPlacement = draft.getPlayerPlacement();
         draft.addToQuestDecks();
+
+        drafting = false;
+        FModel.getQuest().getAchievements().endCurrentTournament(playerPlacement);
 
         update();
         view.populate();
@@ -213,7 +217,8 @@ public class QuestTournamentController {
                 || FModel.getQuest().getAchievements().getCurrentDraftIndex() == -1)) {
             view.setMode(Mode.SELECT_TOURNAMENT);
         }
-        else if (!FModel.getQuest().getAchievements().getCurrentDraft().isStarted()) {
+        else if (FModel.getQuest().getAchievements().getCurrentDraft() == null
+                || !FModel.getQuest().getAchievements().getCurrentDraft().isStarted()) {
             view.setMode(Mode.PREPARE_DECK);
         }
         else {
