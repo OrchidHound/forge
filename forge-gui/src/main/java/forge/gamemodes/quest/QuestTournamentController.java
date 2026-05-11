@@ -165,11 +165,20 @@ public class QuestTournamentController {
         view.populate();
     }
 
+    private static boolean isTokenBannedFormat(final QuestEventDraft.QuestDraftFormat format) {
+        final String name = format.getName();
+        return name.contains("Master")
+                || name.contains("Alpha")
+                || name.contains("Beta")
+                || name.contains("Urza");
+    }
+
     public void spendToken() {
         final QuestAchievements achievements = FModel.getQuest().getAchievements();
         if (achievements != null) {
 
             List<QuestDraftFormat> formats = QuestEventDraft.getAvailableFormats(FModel.getQuest());
+            formats.removeIf(QuestTournamentController::isTokenBannedFormat);
 
             if (formats.isEmpty()) {
                 SOptionPane.showErrorDialog(localizer.getMessage("lblNoAvailableDraftsMessage"),localizer.getMessage("lblNoAvailableDrafts"));
