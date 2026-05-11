@@ -111,6 +111,13 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::showSpellShop);
                 });
             }));
+            addItem(new FMenuItem("Trigger Special Tournament", FSkinImage.QUEST_BIG_SHIELD, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    QuestUtil.performBannedTournamentEvent();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                });
+            }));
         }
     };
     private static final FMenuItem testMenuItem = new FMenuItem("[Test]", FSkinImage.QUEST_BIG_SWORD, event ->

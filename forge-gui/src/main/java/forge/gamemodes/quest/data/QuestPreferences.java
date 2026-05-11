@@ -204,7 +204,10 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
         CARD_DUPLICATION_CHANCE("75"),
 
         // Chance of the special rare shop event per duel win, stored per-mille (e.g. 75 = 7.5%)
-        SPECIAL_SHOP_CHANCE("75");
+        SPECIAL_SHOP_CHANCE("75"),
+
+        // Chance of the banned tournament format event per duel win, stored per-mille (e.g. 50 = 5%)
+        BANNED_TOURNAMENT_CHANCE("50");
 
         private final String strDefaultVal;
 
@@ -323,6 +326,7 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
 
             case CARD_DUPLICATION_CHANCE:
             case SPECIAL_SHOP_CHANCE:
+            case BANNED_TOURNAMENT_CHANCE:
                 if (val < 0 || val > 1000) {
                     return "Value must be between 0 and 1000 (e.g. 75 = 7.5%).";
                 }

@@ -165,7 +165,7 @@ public class QuestTournamentController {
         view.populate();
     }
 
-    private static boolean isTokenBannedFormat(final QuestEventDraft.QuestDraftFormat format) {
+    public static boolean isTokenBannedFormat(final QuestEventDraft.QuestDraftFormat format) {
         final String name = format.getName();
         return name.contains("Master")
                 || name.contains("Alpha")

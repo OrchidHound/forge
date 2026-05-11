@@ -391,4 +391,13 @@ public class QuestAchievements {
         }
     }
 
+    public void addDraftWithFormat(final QuestDraftFormat format) {
+        if (drafts == null) {
+            drafts = new QuestEventDraftContainer();
+        }
+        draftsToGenerate++;
+        nextDraftFormat = format;
+        generateDrafts();
+    }
+
 }

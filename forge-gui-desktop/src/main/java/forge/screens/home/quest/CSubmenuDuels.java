@@ -222,6 +222,10 @@ public enum CSubmenuDuels implements ICDoc {
 				itemSpecialShop.addActionListener(ae -> { forge.gamemodes.quest.QuestUtil.triggerSpecialShop(); forge.gamemodes.quest.QuestUtil.showSpellShop(); });
 				testMenu.add(itemSpecialShop);
 
+				javax.swing.JMenuItem itemBannedTournament = new javax.swing.JMenuItem("Trigger Special Tournament");
+				itemBannedTournament.addActionListener(ae -> { forge.gamemodes.quest.QuestUtil.performBannedTournamentEvent(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
+				testMenu.add(itemBannedTournament);
+
 				testMenu.show(btnTest, 0, btnTest.getHeight());
 			});
 			view.getPnlDuels().add(btnTest, "gaptop 12px");

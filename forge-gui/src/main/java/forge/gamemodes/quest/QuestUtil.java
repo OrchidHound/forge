@@ -496,6 +496,34 @@ public class QuestUtil {
         QuestSpellShop.specialShopActive = true;
     }
 
+    public static boolean performBannedTournamentEvent() {
+        final QuestController quest = FModel.getQuest();
+        final QuestAchievements achievements = quest.getAchievements();
+        if (achievements == null) { return false; }
+
+        final List<QuestEventDraft.QuestDraftFormat> allFormats = QuestEventDraft.getAvailableFormats(quest);
+        final List<QuestEventDraft.QuestDraftFormat> bannedFormats = new ArrayList<>();
+        for (final QuestEventDraft.QuestDraftFormat fmt : allFormats) {
+            if (QuestTournamentController.isTokenBannedFormat(fmt)) {
+                bannedFormats.add(fmt);
+            }
+        }
+        bannedFormats.sort(null);
+
+        if (bannedFormats.isEmpty()) { return false; }
+
+        final QuestEventDraft.QuestDraftFormat chosen = SGuiChoose.oneOrNone(
+            "A special tournament opportunity has appeared! Choose a format to add to the Tournaments screen:",
+            bannedFormats);
+
+        if (chosen != null) {
+            achievements.addDraftWithFormat(chosen);
+            quest.save();
+            return true;
+        }
+        return false;
+    }
+
     /** */
     public static void showBazaar() {
         final Localizer localizer = Localizer.getInstance();

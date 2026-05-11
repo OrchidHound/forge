@@ -162,6 +162,12 @@ public class QuestWinLoseController {
                     awardSpecialShop();
                 }
 
+                // Banned tournament format event
+                final int bannedTournamentChance = FModel.getQuestPreferences().getPrefInt(QPref.BANNED_TOURNAMENT_CHANCE);
+                if (MyRandom.getRandom().nextFloat() < bannedTournamentChance / 1000f) {
+                    awardBannedTournament();
+                }
+
                 // Random rare given at 50% chance (65% with luck upgrade)
                 if (getLuckyCoinResult()) {
                     awardRandomRare("You've won a random rare.");
@@ -741,6 +747,17 @@ public class QuestWinLoseController {
             "Special Shop Available!",
             FSkinProp.ICO_QUEST_BOOK
         );
+    }
+
+    private void awardBannedTournament() {
+        final boolean added = QuestUtil.performBannedTournamentEvent();
+        if (added) {
+            view.showMessage(
+                "The special tournament has been added to the Tournaments screen!",
+                "Special Tournament Added!",
+                FSkinProp.ICO_QUEST_BIG_SHIELD
+            );
+        }
     }
 
     private void penalizeLoss() {
