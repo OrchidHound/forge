@@ -40,6 +40,8 @@ import forge.gui.interfaces.IGuiGame;
 import forge.gui.util.SGuiChoose;
 import forge.gui.util.SOptionPane;
 import forge.item.IPaperCard;
+import forge.item.PaperCard;
+import forge.util.ItemPool;
 import forge.item.PaperToken;
 import forge.localinstance.properties.ForgePreferences.FPref;
 import forge.localinstance.skin.FSkinProp;
@@ -50,7 +52,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -720,6 +724,29 @@ public class QuestUtil {
         }
 
         return out.toString();
+    }
+
+    /**
+     * Prompts the player to optionally choose a card from their collection to receive a duplicate copy of.
+     * Adds the chosen card to the collection. Does not save — caller is responsible for saving.
+     *
+     * @return the duplicated PaperCard, or null if the player cancelled
+     */
+    public static PaperCard performCardDuplication() {
+        final ItemPool<PaperCard> pool = FModel.getQuest().getCards().getCardpool();
+        if (pool.isEmpty()) { return null; }
+
+        final List<PaperCard> cards = new ArrayList<>();
+        for (final Map.Entry<PaperCard, Integer> e : pool) {
+            cards.add(e.getKey());
+        }
+        cards.sort(Comparator.comparing(PaperCard::getName));
+
+        final PaperCard chosen = SGuiChoose.oneOrNone("Choose a card from your collection to duplicate (press Cancel to skip):", cards);
+        if (chosen != null) {
+            FModel.getQuest().getCards().addSingleCard(chosen, 1);
+        }
+        return chosen;
     }
 
     public static void buyQuestItem(final IQuestBazaarItem item) {

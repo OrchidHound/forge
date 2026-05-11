@@ -150,6 +150,12 @@ public class QuestWinLoseController {
 
                 awardWinStreakBonus();
 
+                // Card duplication event
+                final int duplicationChance = FModel.getQuestPreferences().getPrefInt(QPref.CARD_DUPLICATION_CHANCE);
+                if (MyRandom.getRandom().nextFloat() < duplicationChance / 1000f) {
+                    awardCardDuplication();
+                }
+
                 // Random rare given at 50% chance (65% with luck upgrade)
                 if (getLuckyCoinResult()) {
                     awardRandomRare("You've won a random rare.");
@@ -712,6 +718,13 @@ public class QuestWinLoseController {
             }
             view.showCards(message, cardsWon);
             qData.getCards().addAllCards(cardsWon);
+        }
+    }
+
+    private void awardCardDuplication() {
+        final PaperCard chosen = QuestUtil.performCardDuplication();
+        if (chosen != null) {
+            view.showCards("A stroke of fortune! You found a duplicate copy of a card!", List.of(chosen));
         }
     }
 

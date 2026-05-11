@@ -198,7 +198,10 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
         RATING_FILTER_DEFAULT("1"),
 
         // Exclude promos from the random reward pool
-        EXCLUDE_PROMOS_FROM_POOL("1");
+        EXCLUDE_PROMOS_FROM_POOL("1"),
+
+        // Chance of the card duplication event per duel win, stored per-mille (e.g. 75 = 7.5%)
+        CARD_DUPLICATION_CHANCE("75");
 
         private final String strDefaultVal;
 
@@ -315,6 +318,11 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
                 }
                 break;
 
+            case CARD_DUPLICATION_CHANCE:
+                if (val < 0 || val > 1000) {
+                    return "Value must be between 0 and 1000 (e.g. 75 = 7.5%).";
+                }
+                break;
             case BOSS_ENCOUNTER_FREQUENCY_EASY:
             case BOSS_ENCOUNTER_FREQUENCY_MEDIUM:
             case BOSS_ENCOUNTER_FREQUENCY_HARD:

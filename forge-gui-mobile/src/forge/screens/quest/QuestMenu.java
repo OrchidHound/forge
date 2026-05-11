@@ -98,6 +98,13 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 }
             }));
+            addItem(new FMenuItem("Trigger Card Duplication", FSkinImage.QUEST_COIN, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    QuestUtil.performCardDuplication();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                });
+            }));
         }
     };
     private static final FMenuItem testMenuItem = new FMenuItem("[Test]", FSkinImage.QUEST_BIG_SWORD, event ->

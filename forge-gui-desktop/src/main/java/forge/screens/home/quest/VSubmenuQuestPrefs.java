@@ -259,6 +259,8 @@ public enum VSubmenuQuestPrefs implements IVSubmenu<CSubmenuQuestPrefs> {
         pnlRewards.add(new PrefInput(QPref.REWARDS_HEALTH_DIFF_MAX, QuestPreferencesErrType.REWARDS), fieldConstraints);
         pnlRewards.add(new FLabel.Builder().text(localizer.getMessage("lblExcludePromosFromRewardPool")).fontAlign(SwingConstants.RIGHT).build(), labelConstraints);
         pnlRewards.add(new PrefInput(QPref.EXCLUDE_PROMOS_FROM_POOL, QuestPreferencesErrType.REWARDS), fieldConstraints);
+        pnlRewards.add(new FLabel.Builder().text(localizer.getMessage("lblCardDuplicationChance")).fontAlign(SwingConstants.RIGHT).build(), labelConstraints);
+        pnlRewards.add(new PrefInput(QPref.CARD_DUPLICATION_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
     }
     private void populateDifficulty() {
         pnlDifficulty.setOpaque(false);
