@@ -218,6 +218,10 @@ public enum CSubmenuDuels implements ICDoc {
 				itemDuplicate.addActionListener(ae -> { forge.gamemodes.quest.QuestUtil.performCardDuplication(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
 				testMenu.add(itemDuplicate);
 
+				javax.swing.JMenuItem itemSpecialShop = new javax.swing.JMenuItem("Trigger Special Shop");
+				itemSpecialShop.addActionListener(ae -> { forge.gamemodes.quest.QuestUtil.triggerSpecialShop(); forge.gamemodes.quest.QuestUtil.showSpellShop(); });
+				testMenu.add(itemSpecialShop);
+
 				testMenu.show(btnTest, 0, btnTest.getHeight());
 			});
 			view.getPnlDuels().add(btnTest, "gaptop 12px");

@@ -243,6 +243,22 @@ public final class QuestUtilCards {
     }
 
     /**
+     * Generates a pool of rare/mythic cards for the special shop event.
+     */
+    public ItemPool<InventoryItem> generateSpecialShopList() {
+        final int numCards = 25;
+        final List<PaperCard> selected = getQuestCardPool()
+            .filter(PaperCardPredicates.IS_RARE_OR_MYTHIC)
+            .collect(StreamUtil.random(numCards));
+
+        final ItemPool<InventoryItem> pool = new ItemPool<>(InventoryItem.class);
+        for (final PaperCard card : selected) {
+            pool.add(card);
+        }
+        return pool;
+    }
+
+    /**
      * Setup new game card pool.
      *
      * @param formatStartingPool

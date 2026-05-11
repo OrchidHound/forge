@@ -81,6 +81,7 @@ public class QuestSpellShopScreen extends TabPageScreen<QuestSpellShopScreen> {
     }
 
     public void onClose(Consumer<Boolean> canCloseCallback) {
+        QuestSpellShop.clearSpecialShop();
         FModel.getQuest().save();
         super.onClose(canCloseCallback);
     }
@@ -103,8 +104,12 @@ public class QuestSpellShopScreen extends TabPageScreen<QuestSpellShopScreen> {
         if (maxSellPrice < Integer.MAX_VALUE) {
             maxSellingPrice = String.format(Forge.getLocalizer().getMessage("lblMaximumSellingCredits"), maxSellPrice);
         }
-        spellShopPage.lblSellPercentage.setText(Forge.getLocalizer().getMessage("lblSellCardsAt") + formatter.format(multiPercent)
-                + Forge.getLocalizer().getMessage("lblTheirValue") + maxSellingPrice);
+        if (QuestSpellShop.specialShopActive) {
+            spellShopPage.lblSellPercentage.setText("Special Shop: Rare cards at 10% price. Selling disabled.");
+        } else {
+            spellShopPage.lblSellPercentage.setText(Forge.getLocalizer().getMessage("lblSellCardsAt") + formatter.format(multiPercent)
+                    + Forge.getLocalizer().getMessage("lblTheirValue") + maxSellingPrice);
+        }
     }
 
     public void updateCreditsLabel() {
@@ -257,11 +262,17 @@ public class QuestSpellShopScreen extends TabPageScreen<QuestSpellShopScreen> {
         protected void refresh() {
             FThreads.invokeInEdtLater(() -> LoadingOverlay.show(Forge.getLocalizer().getInstance().getMessage("lblLoading"), true, () -> {
                 Map<ColumnDef, ItemColumn> colOverrides = new HashMap<>();
-                ItemColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverrides, ColumnDef.PRICE, QuestSpellShop.fnPriceCompare, QuestSpellShop.fnPriceGet);
+                if (QuestSpellShop.specialShopActive) {
+                    ItemColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverrides, ColumnDef.PRICE, QuestSpellShop.fnSpecialPriceCompare, QuestSpellShop.fnSpecialPriceGet);
+                } else {
+                    ItemColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverrides, ColumnDef.PRICE, QuestSpellShop.fnPriceCompare, QuestSpellShop.fnPriceGet);
+                }
                 ItemColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverrides, ColumnDef.OWNED, FModel.getQuest().getCards().getFnOwnedCompare(), FModel.getQuest().getCards().getFnOwnedGet());
                 itemManager.setup(ItemManagerConfig.SPELL_SHOP, colOverrides);
 
-                itemManager.setPool(FModel.getQuest().getCards().getShopList());
+                itemManager.setPool(QuestSpellShop.specialShopActive
+                    ? QuestSpellShop.specialShopPool
+                    : FModel.getQuest().getCards().getShopList());
             }));
         }
 
@@ -334,6 +345,7 @@ public class QuestSpellShopScreen extends TabPageScreen<QuestSpellShopScreen> {
 
         @Override
         protected void activateItems(ItemPool<InventoryItem> items) {
+            if (QuestSpellShop.specialShopActive) { return; }
             QuestSpellShop.sell(items, parentScreen.spellShopPage.itemManager, itemManager, true);
         }
 

@@ -491,6 +491,11 @@ public class QuestUtil {
         GuiBase.getInterface().showSpellShop();
     }
 
+    public static void triggerSpecialShop() {
+        QuestSpellShop.specialShopPool = FModel.getQuest().getCards().generateSpecialShopList();
+        QuestSpellShop.specialShopActive = true;
+    }
+
     /** */
     public static void showBazaar() {
         final Localizer localizer = Localizer.getInstance();

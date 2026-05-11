@@ -156,6 +156,12 @@ public class QuestWinLoseController {
                     awardCardDuplication();
                 }
 
+                // Special rare shop event
+                final int specialShopChance = FModel.getQuestPreferences().getPrefInt(QPref.SPECIAL_SHOP_CHANCE);
+                if (MyRandom.getRandom().nextFloat() < specialShopChance / 1000f) {
+                    awardSpecialShop();
+                }
+
                 // Random rare given at 50% chance (65% with luck upgrade)
                 if (getLuckyCoinResult()) {
                     awardRandomRare("You've won a random rare.");
@@ -726,6 +732,15 @@ public class QuestWinLoseController {
         if (chosen != null) {
             view.showCards("A stroke of fortune! You found a duplicate copy of a card!", List.of(chosen));
         }
+    }
+
+    private void awardSpecialShop() {
+        QuestUtil.triggerSpecialShop();
+        view.showMessage(
+            "A wandering merchant has appeared! Visit the Spell Shop to browse a special selection of rare cards at 10% of their normal value.",
+            "Special Shop Available!",
+            FSkinProp.ICO_QUEST_BOOK
+        );
     }
 
     private void penalizeLoss() {

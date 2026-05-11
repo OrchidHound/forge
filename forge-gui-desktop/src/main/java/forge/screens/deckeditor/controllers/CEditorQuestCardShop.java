@@ -159,7 +159,7 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
      */
     @Override
     protected void onRemoveItems(Iterable<Entry<InventoryItem, Integer>> items, boolean toAlternate) {
-        if (showingFullCatalog || toAlternate) { return; }
+        if (showingFullCatalog || toAlternate || QuestSpellShop.specialShopActive) { return; }
 
         QuestSpellShop.sell(items, this.getCatalogManager(), this.getDeckManager(), true);
         updateCreditsLabel();
@@ -212,7 +212,11 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
         final Map<ColumnDef, ItemTableColumn> colOverridesDeck = new HashMap<>();
 
         // Add spell shop-specific columns
-        ItemTableColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverridesCatalog, ColumnDef.PRICE, QuestSpellShop.fnPriceCompare, QuestSpellShop.fnPriceGet);
+        if (QuestSpellShop.specialShopActive) {
+            ItemTableColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverridesCatalog, ColumnDef.PRICE, QuestSpellShop.fnSpecialPriceCompare, QuestSpellShop.fnSpecialPriceGet);
+        } else {
+            ItemTableColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverridesCatalog, ColumnDef.PRICE, QuestSpellShop.fnPriceCompare, QuestSpellShop.fnPriceGet);
+        }
         ItemTableColumn.addColOverride(ItemManagerConfig.SPELL_SHOP, colOverridesCatalog, ColumnDef.OWNED, questData.getCards().getFnOwnedCompare(), questData.getCards().getFnOwnedGet());
         ItemTableColumn.addColOverride(ItemManagerConfig.QUEST_INVENTORY, colOverridesDeck, ColumnDef.PRICE, QuestSpellShop.fnPriceCompare, QuestSpellShop.fnPriceSellGet);
         ItemTableColumn.addColOverride(ItemManagerConfig.QUEST_INVENTORY, colOverridesDeck, ColumnDef.NEW, this.questData.getCards().getFnNewCompare(), this.questData.getCards().getFnNewGet());
@@ -248,7 +252,9 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
 
         QuestSpellShop.updateDecksForEachCard();
         double multiplier = QuestSpellShop.updateMultiplier();
-        this.cardsForSale = this.questData.getCards().getShopList();
+        this.cardsForSale = QuestSpellShop.specialShopActive
+            ? QuestSpellShop.specialShopPool
+            : this.questData.getCards().getShopList();
 
         final ItemPool<InventoryItem> ownedItems = new ItemPool<>(InventoryItem.class);
         ownedItems.addAllOfType(this.questData.getCards().getCardpool().getView());
@@ -256,12 +262,19 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
         this.getCatalogManager().setPool(cardsForSale);
         this.getDeckManager().setPool(ownedItems);
 
-        this.getBtnRemove4().setText("Sell all extras");
-        this.getBtnRemove4().setToolTipText("Sell unneeded extra copies of all cards");
-        this.getBtnRemove4().setCommand((UiCommand) () -> {
-            QuestSpellShop.sellExtras(getCatalogManager(), getDeckManager());
-            updateCreditsLabel();
-        });
+        if (QuestSpellShop.specialShopActive) {
+            VCardCatalog.SINGLETON_INSTANCE.getTabLabel().setText("Special Rare Shop");
+            this.getBtnAdd().setText("Buy at 10% Price");
+            this.getBtnRemove().setEnabled(false);
+            this.getBtnRemove4().setEnabled(false);
+        } else {
+            this.getBtnRemove4().setText("Sell all extras");
+            this.getBtnRemove4().setToolTipText("Sell unneeded extra copies of all cards");
+            this.getBtnRemove4().setCommand((UiCommand) () -> {
+                QuestSpellShop.sellExtras(getCatalogManager(), getDeckManager());
+                updateCreditsLabel();
+            });
+        }
 
         this.getDeckManager().getPnlButtons().add(creditsLabel, "gap 5px");
         updateCreditsLabel();
@@ -275,10 +288,16 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
             maxSellingPrice = String.format("Maximum selling price is %d credits.", maxSellPrice);
         }
         this.getCatalogManager().getPnlButtons().remove(this.getBtnAdd4());
-        this.getCatalogManager().getPnlButtons().add(fullCatalogToggle, "w 25%, h 30!", 0);
+        if (!QuestSpellShop.specialShopActive) {
+            this.getCatalogManager().getPnlButtons().add(fullCatalogToggle, "w 25%, h 30!", 0);
+        }
         this.getCatalogManager().getPnlButtons().add(sellPercentageLabel);
-        this.sellPercentageLabel.setText("<html>Selling cards at " + formatter.format(multiPercent)
-                + "% of their value.<br>" + maxSellingPrice + "</html>");
+        if (QuestSpellShop.specialShopActive) {
+            this.sellPercentageLabel.setText("<html>Special Shop: Rare cards at 10% of normal price.<br>Selling is disabled in this shop.</html>");
+        } else {
+            this.sellPercentageLabel.setText("<html>Selling cards at " + formatter.format(multiPercent)
+                    + "% of their value.<br>" + maxSellingPrice + "</html>");
+        }
 
         //TODO: Add filter for SItemManagerUtil.StatTypes.PACK
 
@@ -292,6 +311,7 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
      */
     @Override
     public boolean canSwitchAway(boolean isClosing) {
+        QuestSpellShop.clearSpecialShop();
         FModel.getQuest().save();
         return true;
     }
@@ -322,6 +342,8 @@ public final class CEditorQuestCardShop extends ACEditorBase<InventoryItem, Deck
 
         this.getBtnAdd().setText(CCAddLabel);
         this.getBtnRemove().setText(CDRemLabel);
+        this.getBtnRemove().setEnabled(true);
+        this.getBtnRemove4().setEnabled(true);
 
         //TODO: Remove filter for SItemManagerUtil.StatTypes.PACK
 

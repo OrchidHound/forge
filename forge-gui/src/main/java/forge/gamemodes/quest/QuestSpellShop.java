@@ -38,6 +38,19 @@ public class QuestSpellShop {
     private static double multiplier;
     private static ItemPool<InventoryItem> decksUsingMyCards;
 
+    public static boolean specialShopActive = false;
+    public static ItemPool<InventoryItem> specialShopPool = null;
+
+    public static void clearSpecialShop() {
+        specialShopActive = false;
+        specialShopPool = null;
+    }
+
+    public static int getEffectiveCardValue(final InventoryItem item) {
+        int base = getCardValue(item);
+        return specialShopActive ? Math.max(1, base / 10) : base;
+    }
+
     public static Integer getCardValue(final InventoryItem card) {
         String ns, nsArt;
         int value = 1337; // previously this was the returned default
@@ -139,12 +152,15 @@ public class QuestSpellShop {
     public static final Function<Entry<InventoryItem, Integer>, Comparable<?>> fnDeckCompare = from -> decksUsingMyCards.count(from.getKey());
     public static final Function<Entry<? extends InventoryItem, Integer>, Object> fnDeckGet = from -> Integer.toString(decksUsingMyCards.count(from.getKey()));
 
+    public static final Function<Entry<InventoryItem, Integer>, Comparable<?>> fnSpecialPriceCompare = from -> Math.max(1, getCardValue(from.getKey()) / 10);
+    public static final Function<Entry<? extends InventoryItem, Integer>, Object> fnSpecialPriceGet = from -> Math.max(1, getCardValue(from.getKey()) / 10);
+
     public static long getTotalBuyCost(Iterable<Entry<InventoryItem, Integer>> items) {
         long totalCost = 0;
         for (Entry<InventoryItem, Integer> itemEntry : items) {
             final InventoryItem item = itemEntry.getKey();
             if (item instanceof PaperCard || item instanceof SealedProduct || item instanceof PreconDeck) {
-                totalCost += itemEntry.getValue() * getCardValue(item);
+                totalCost += itemEntry.getValue() * getEffectiveCardValue(item);
             }
         }
         return totalCost;
@@ -158,7 +174,7 @@ public class QuestSpellShop {
             if (item instanceof PaperCard || item instanceof SealedProduct || item instanceof PreconDeck) {
                 final int qty = itemEntry.getValue();
                 itemsToBuy.add(item, qty);
-                totalCost += qty * getCardValue(item);
+                totalCost += qty * getEffectiveCardValue(item);
             }
         }
         if (itemsToBuy.isEmpty()) { return; }
@@ -185,7 +201,7 @@ public class QuestSpellShop {
             final InventoryItem item = itemEntry.getKey();
 
             final int qty = itemEntry.getValue();
-            final int value = QuestSpellShop.getCardValue(item);
+            final int value = QuestSpellShop.getEffectiveCardValue(item);
 
             if (item instanceof PaperCard) {
                 FModel.getQuest().getCards().buyCard((PaperCard) item, qty, value);
@@ -325,6 +341,7 @@ public class QuestSpellShop {
     }
 
     public static void sellExtras(IItemManager<InventoryItem> shopManager, IItemManager<InventoryItem> inventoryManager) {
+        if (specialShopActive) { return; }
         List<Entry<InventoryItem, Integer>> cardsToRemove = new LinkedList<>();
         for (Entry<InventoryItem, Integer> item : inventoryManager.getPool()) {
             PaperCard card = (PaperCard)item.getKey();

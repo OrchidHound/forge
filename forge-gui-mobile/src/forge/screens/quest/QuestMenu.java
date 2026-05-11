@@ -105,6 +105,12 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
             }));
+            addItem(new FMenuItem("Trigger Special Shop", FSkinImage.QUEST_BOOK, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    QuestUtil.triggerSpecialShop();
+                    FThreads.invokeInEdtLater(QuestMenu::showSpellShop);
+                });
+            }));
         }
     };
     private static final FMenuItem testMenuItem = new FMenuItem("[Test]", FSkinImage.QUEST_BIG_SWORD, event ->
