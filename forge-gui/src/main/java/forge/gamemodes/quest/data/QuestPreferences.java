@@ -116,6 +116,12 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
         WINS_NEW_DRAFT("5"),
         WINS_ROTATE_DRAFT("15"),
 
+        // Events between boss encounters, by difficulty
+        BOSS_ENCOUNTER_FREQUENCY_EASY("21"),
+        BOSS_ENCOUNTER_FREQUENCY_MEDIUM("18"),
+        BOSS_ENCOUNTER_FREQUENCY_HARD("15"),
+        BOSS_ENCOUNTER_FREQUENCY_EXPERT("12"),
+
         // Matches won per booster award, by difficulty
         WINS_BOOSTER_EASY("1"),
         WINS_BOOSTER_MEDIUM("1"),
@@ -226,7 +232,8 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
         WINS_RANKUP,
         WINS_MEDIUMAI,
         WINS_HARDAI,
-        WINS_EXPERTAI
+        WINS_EXPERTAI,
+        BOSS_ENCOUNTER_FREQUENCY
     }
 
     /** Instantiates a QuestPreferences object. */
@@ -308,6 +315,10 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
                 }
                 break;
 
+            case BOSS_ENCOUNTER_FREQUENCY_EASY:
+            case BOSS_ENCOUNTER_FREQUENCY_MEDIUM:
+            case BOSS_ENCOUNTER_FREQUENCY_HARD:
+            case BOSS_ENCOUNTER_FREQUENCY_EXPERT:
             case SHOP_MAX_PACKS:
             case SHOP_MAX_SELLING_PRICE:
             case SHOP_SELLING_PERCENTAGE_BASE:

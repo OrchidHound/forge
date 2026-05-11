@@ -179,7 +179,8 @@ public class QuestAchievements {
 
     public void incrementRegularEventsPlayed() {
         regularEventsPlayed++;
-        if (regularEventsPlayed > 0 && regularEventsPlayed % 20 == 0) {
+        int freq = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
+        if (regularEventsPlayed % freq == 0) {
             bossEventPending = true;
         }
     }
@@ -193,13 +194,15 @@ public class QuestAchievements {
 
     // Debug helpers for testing boss encounters
     public void debugTriggerBoss() {
-        regularEventsPlayed = 20;
+        int freq = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
+        regularEventsPlayed = freq;
         bossEventPending = true;
         questRunOver = false;
     }
 
     public void debugTriggerFinalBoss() {
-        regularEventsPlayed = 120;
+        int freq = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
+        regularEventsPlayed = freq * 6;
         bossEventPending = true;
         questRunOver = false;
     }

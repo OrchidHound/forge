@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import forge.gamemodes.quest.data.QuestPreferences.DifficultyPrefs;
 import forge.model.FModel;
 import forge.util.MyRandom;
 
@@ -37,8 +38,10 @@ public class QuestBossEvent extends QuestEventDuel {
 
     public static List<QuestEventDuel> createBossEncounterList(QuestEventDuelManagerInterface manager) {
         final int regularEventsPlayed = FModel.getQuest().getAchievements().getRegularEventsPlayed();
-        final boolean isFinalBoss = regularEventsPlayed >= 120;
-        final int bossNumber = regularEventsPlayed / 20;
+        final int difficulty = FModel.getQuest().getAchievements().getDifficulty();
+        final int frequency = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
+        final int bossNumber = regularEventsPlayed / frequency;
+        final boolean isFinalBoss = bossNumber >= 6;
 
         QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber);
 

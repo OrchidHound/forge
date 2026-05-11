@@ -112,6 +112,7 @@ public class QuestPrefsScreen extends FScreen {
 
         //Difficulty Adjustments (Easy)
         scroller.add(new PrefsHeader(Forge.getLocalizer().getMessage("lblDifficultyAdjustmentsEasy"), FSkinImage.QUEST_NOTES, PrefsGroup.DIFFICULTY_EASY));
+        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblBossEncounterFrequency"), QPref.BOSS_ENCOUNTER_FREQUENCY_EASY, PrefsGroup.DIFFICULTY_EASY));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForBooster"), QPref.WINS_BOOSTER_EASY, PrefsGroup.DIFFICULTY_EASY));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForRankIncrease"), QPref.WINS_RANKUP_EASY, PrefsGroup.DIFFICULTY_EASY));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForMediumAI"), QPref.WINS_MEDIUMAI_EASY, PrefsGroup.DIFFICULTY_EASY));
@@ -124,6 +125,7 @@ public class QuestPrefsScreen extends FScreen {
 
         //Difficulty Adjustments (Medium)
         scroller.add(new PrefsHeader(Forge.getLocalizer().getMessage("lblDifficultyAdjustmentsMedium"), FSkinImage.QUEST_NOTES, PrefsGroup.DIFFICULTY_MEDIUM));
+        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblBossEncounterFrequency"), QPref.BOSS_ENCOUNTER_FREQUENCY_MEDIUM, PrefsGroup.DIFFICULTY_MEDIUM));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForBooster"), QPref.WINS_BOOSTER_MEDIUM, PrefsGroup.DIFFICULTY_MEDIUM));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForRankIncrease"), QPref.WINS_RANKUP_MEDIUM, PrefsGroup.DIFFICULTY_MEDIUM));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForMediumAI"), QPref.WINS_MEDIUMAI_MEDIUM, PrefsGroup.DIFFICULTY_MEDIUM));
@@ -136,6 +138,7 @@ public class QuestPrefsScreen extends FScreen {
 
         //Difficulty Adjustments (Hard)
         scroller.add(new PrefsHeader(Forge.getLocalizer().getMessage("lblDifficultyAdjustmentsHard"), FSkinImage.QUEST_NOTES, PrefsGroup.DIFFICULTY_HARD));
+        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblBossEncounterFrequency"), QPref.BOSS_ENCOUNTER_FREQUENCY_HARD, PrefsGroup.DIFFICULTY_HARD));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForBooster"), QPref.WINS_BOOSTER_HARD, PrefsGroup.DIFFICULTY_HARD));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForRankIncrease"), QPref.WINS_RANKUP_HARD, PrefsGroup.DIFFICULTY_HARD));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForMediumAI"), QPref.WINS_MEDIUMAI_HARD, PrefsGroup.DIFFICULTY_HARD));
@@ -148,6 +151,7 @@ public class QuestPrefsScreen extends FScreen {
 
         //Difficulty Adjustments (Expert)
         scroller.add(new PrefsHeader(Forge.getLocalizer().getMessage("lblDifficultyAdjustmentsExpert"), FSkinImage.QUEST_NOTES, PrefsGroup.DIFFICULTY_EXPERT));
+        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblBossEncounterFrequency"), QPref.BOSS_ENCOUNTER_FREQUENCY_EXPERT, PrefsGroup.DIFFICULTY_EXPERT));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForBooster"), QPref.WINS_BOOSTER_EXPERT, PrefsGroup.DIFFICULTY_EXPERT));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForRankIncrease"), QPref.WINS_RANKUP_EXPERT, PrefsGroup.DIFFICULTY_EXPERT));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsForMediumAI"), QPref.WINS_MEDIUMAI_EXPERT, PrefsGroup.DIFFICULTY_EXPERT));
