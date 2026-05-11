@@ -157,11 +157,9 @@ public class QuestTournamentController {
         if (saveDraft) {
             draft.saveToRegularDraft();
         }
-        final int playerPlacement = draft.getPlayerPlacement();
         draft.addToQuestDecks();
 
         drafting = false;
-        FModel.getQuest().getAchievements().endCurrentTournament(playerPlacement);
 
         update();
         view.populate();
