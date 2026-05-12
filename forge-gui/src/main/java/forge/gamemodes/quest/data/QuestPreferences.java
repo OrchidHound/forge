@@ -201,13 +201,13 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
         EXCLUDE_PROMOS_FROM_POOL("1"),
 
         // Chance of the card duplication event per duel win, stored per-mille (e.g. 75 = 7.5%)
-        CARD_DUPLICATION_CHANCE("75"),
+        CARD_DUPLICATION_CHANCE("100"),
 
         // Chance of the special rare shop event per duel win, stored per-mille (e.g. 75 = 7.5%)
-        SPECIAL_SHOP_CHANCE("75"),
+        SPECIAL_SHOP_CHANCE("100"),
 
         // Chance of the banned tournament format event per duel win, stored per-mille (e.g. 50 = 5%)
-        BANNED_TOURNAMENT_CHANCE("50");
+        BANNED_TOURNAMENT_CHANCE("75");
 
         private final String strDefaultVal;
 

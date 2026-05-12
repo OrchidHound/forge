@@ -555,6 +555,7 @@ public class QuestUtil {
 
     public static void startGame() {
         if (canStartGame()) {
+            QuestSpellShop.clearSpecialShop();
             finishStartingGame();
         }
     }

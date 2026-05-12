@@ -7,6 +7,7 @@ import forge.Forge;
 import forge.assets.FSkinImage;
 import forge.deck.FDeckEditor;
 import forge.gamemodes.quest.IVQuestStats;
+import forge.gamemodes.quest.QuestSpellShop;
 import forge.gamemodes.quest.QuestUtil;
 import forge.gamemodes.quest.data.QuestPreferences.QPref;
 import forge.gamemodes.quest.io.QuestDataIO;
@@ -117,6 +118,10 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FModel.getQuest().save();
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
+            }));
+            addItem(new FMenuItem("Reset Special Shop", FSkinImage.QUEST_BOOK, event -> {
+                QuestSpellShop.clearSpecialShop();
+                FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
             }));
         }
     };
