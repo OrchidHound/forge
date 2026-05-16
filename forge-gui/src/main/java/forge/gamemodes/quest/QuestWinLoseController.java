@@ -168,6 +168,12 @@ public class QuestWinLoseController {
                     awardBannedTournament();
                 }
 
+                // Card exchange event
+                final int cardExchangeChance = FModel.getQuestPreferences().getPrefInt(QPref.CARD_EXCHANGE_CHANCE);
+                if (MyRandom.getRandom().nextFloat() < cardExchangeChance / 1000f) {
+                    awardCardExchange();
+                }
+
                 // Random rare given at 50% chance (65% with luck upgrade)
                 if (getLuckyCoinResult()) {
                     awardRandomRare("You've won a random rare.");
@@ -757,6 +763,19 @@ public class QuestWinLoseController {
                 "Special Tournament Added!",
                 FSkinProp.ICO_QUEST_BIG_SHIELD
             );
+        }
+    }
+
+    private void awardCardExchange() {
+        final PaperCard removed = QuestUtil.performCardExchangeEvent();
+        if (removed == null) { return; }
+
+        final List<PaperCard> reward = QuestUtil.generateCardExchangeReward();
+        qData.save();
+
+        view.showCards("You sacrificed: " + removed.getName(), List.of(removed));
+        if (!reward.isEmpty()) {
+            view.showCards("In return, you received:", reward);
         }
     }
 

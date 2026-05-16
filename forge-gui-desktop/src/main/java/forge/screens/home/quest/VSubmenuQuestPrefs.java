@@ -265,6 +265,8 @@ public enum VSubmenuQuestPrefs implements IVSubmenu<CSubmenuQuestPrefs> {
         pnlRewards.add(new PrefInput(QPref.SPECIAL_SHOP_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
         pnlRewards.add(new FLabel.Builder().text(localizer.getMessage("lblBannedTournamentChance")).fontAlign(SwingConstants.RIGHT).build(), labelConstraints);
         pnlRewards.add(new PrefInput(QPref.BANNED_TOURNAMENT_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
+        pnlRewards.add(new FLabel.Builder().text(localizer.getMessage("lblCardExchangeChance")).fontAlign(SwingConstants.RIGHT).build(), labelConstraints);
+        pnlRewards.add(new PrefInput(QPref.CARD_EXCHANGE_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
     }
     private void populateDifficulty() {
         pnlDifficulty.setOpaque(false);

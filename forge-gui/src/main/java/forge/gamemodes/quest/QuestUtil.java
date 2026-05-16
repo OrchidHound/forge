@@ -39,10 +39,14 @@ import forge.gui.interfaces.IButton;
 import forge.gui.interfaces.IGuiGame;
 import forge.gui.util.SGuiChoose;
 import forge.gui.util.SOptionPane;
+import forge.deck.io.DeckSerializer;
 import forge.item.IPaperCard;
 import forge.item.PaperCard;
+import forge.item.PaperCardPredicates;
 import forge.util.ItemPool;
+import forge.util.MyRandom;
 import forge.item.PaperToken;
+import forge.localinstance.properties.ForgeConstants;
 import forge.localinstance.properties.ForgePreferences.FPref;
 import forge.localinstance.skin.FSkinProp;
 import forge.model.FModel;
@@ -50,8 +54,10 @@ import forge.player.GamePlayerUtil;
 import forge.util.Localizer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -524,6 +530,66 @@ public class QuestUtil {
         return false;
     }
 
+    /**
+     * Offers the player a chance to sacrifice a random non-land card from their deck.
+     * Handles the confirmation dialog and card removal only. Caller is responsible for
+     * generating and displaying rewards via {@link #generateCardExchangeReward()}.
+     *
+     * @return the removed PaperCard, or null if the player declined or no eligible cards exist
+     */
+    public static PaperCard performCardExchangeEvent() {
+        final Deck currentDeck = getCurrentDeck();
+        if (currentDeck == null) { return null; }
+
+        final List<PaperCard> deckCards = currentDeck.getMain().toFlatList();
+        final List<PaperCard> nonLandCards = new ArrayList<>();
+        for (final PaperCard card : deckCards) {
+            if (!card.getRules().getType().isLand()) {
+                nonLandCards.add(card);
+            }
+        }
+        if (nonLandCards.isEmpty()) { return null; }
+
+        final PaperCard toRemove = nonLandCards.get(MyRandom.getRandom().nextInt(nonLandCards.size()));
+
+        final boolean accepted = SOptionPane.showConfirmDialog(
+            "A mysterious force stirs!\n\nYou may sacrifice " + toRemove.getName()
+                + " from your collection in exchange for powerful rewards.\n\nDo you wish to proceed?",
+            "Card Exchange Offer");
+        if (!accepted) { return null; }
+
+        FModel.getQuest().getCards().removeCard(toRemove, 1);
+        return toRemove;
+    }
+
+    /**
+     * Generates the reward for the card exchange event: either 10 random rare/mythic cards
+     * or 2 random cards from the MTGO Vintage Cube, decided at random. Adds them to the
+     * quest card pool and returns them for display.
+     */
+    public static List<PaperCard> generateCardExchangeReward() {
+        final List<PaperCard> reward;
+        if (MyRandom.getRandom().nextFloat() < 0.5f) {
+            reward = FModel.getQuest().getCards().addRandomCards(10, PaperCardPredicates.IS_RARE_OR_MYTHIC);
+        } else {
+            reward = loadVintageCubeCards(2);
+            FModel.getQuest().getCards().addAllCards(reward);
+        }
+        return reward;
+    }
+
+    private static List<PaperCard> loadVintageCubeCards(final int count) {
+        final File cubeFile = new File(ForgeConstants.DECK_CUBE_DIR + "MTGO Vintage Cube 2025-12.dck");
+        if (!cubeFile.exists()) { return new ArrayList<>(); }
+
+        final Deck cubeDeck = DeckSerializer.fromFile(cubeFile);
+        if (cubeDeck == null) { return new ArrayList<>(); }
+
+        final List<PaperCard> allCards = cubeDeck.getMain().toFlatList();
+        Collections.shuffle(allCards, MyRandom.getRandom());
+        return new ArrayList<>(allCards.subList(0, Math.min(count, allCards.size())));
+    }
+
     /** */
     public static void showBazaar() {
         final Localizer localizer = Localizer.getInstance();
@@ -555,12 +621,12 @@ public class QuestUtil {
 
     public static void startGame() {
         if (canStartGame()) {
-            QuestSpellShop.clearSpecialShop();
             finishStartingGame();
         }
     }
 
     public static void finishStartingGame() {
+        QuestSpellShop.clearSpecialShop();
         final QuestController qData = FModel.getQuest();
 
         FThreads.invokeInBackgroundThread(() -> {

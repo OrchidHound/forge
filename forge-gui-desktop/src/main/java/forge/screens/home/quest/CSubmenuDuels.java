@@ -226,6 +226,20 @@ public enum CSubmenuDuels implements ICDoc {
 				itemBannedTournament.addActionListener(ae -> { forge.gamemodes.quest.QuestUtil.performBannedTournamentEvent(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
 				testMenu.add(itemBannedTournament);
 
+				javax.swing.JMenuItem itemCardExchange = new javax.swing.JMenuItem("Trigger Card Exchange");
+				itemCardExchange.addActionListener(ae -> {
+					forge.item.PaperCard removed = forge.gamemodes.quest.QuestUtil.performCardExchangeEvent();
+					if (removed != null) {
+						java.util.List<forge.item.PaperCard> reward = forge.gamemodes.quest.QuestUtil.generateCardExchangeReward();
+						FModel.getQuest().save();
+						if (!reward.isEmpty()) {
+							forge.gui.util.SGuiChoose.reveal("In return, you received:", reward);
+						}
+					}
+					CSubmenuDuels.this.update();
+				});
+				testMenu.add(itemCardExchange);
+
 				testMenu.addSeparator();
 
 				javax.swing.JMenuItem itemResetShop = new javax.swing.JMenuItem("Reset Special Shop");

@@ -119,6 +119,19 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
             }));
+            addItem(new FMenuItem("Trigger Card Exchange", FSkinImage.QUEST_COIN, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    forge.item.PaperCard removed = QuestUtil.performCardExchangeEvent();
+                    if (removed != null) {
+                        java.util.List<forge.item.PaperCard> reward = QuestUtil.generateCardExchangeReward();
+                        FModel.getQuest().save();
+                        if (!reward.isEmpty()) {
+                            forge.gui.util.SGuiChoose.reveal("In return, you received:", reward);
+                        }
+                    }
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                });
+            }));
             addItem(new FMenuItem("Reset Special Shop", FSkinImage.QUEST_BOOK, event -> {
                 QuestSpellShop.clearSpecialShop();
                 FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
