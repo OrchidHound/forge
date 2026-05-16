@@ -146,11 +146,6 @@ public class QuestTournamentController {
                 SOptionPane.showMessageDialog("'" + card.getDisplayName() + "' " + localizer.getMessage("lblAddToCollection"), localizer.getMessage("lblCardAdded"), FSkinProp.ICO_QUEST_STAKES);
             }
 
-            if (draft.getPlayerPlacement() == 1) {
-                SOptionPane.showMessageDialog(localizer.getMessage("lblForPlacing") + placement + localizer.getMessage("lblHaveBeAwardToken"), localizer.getMessage("lblBonusToken"), FSkinProp.ICO_QUEST_NOTES);
-                FModel.getQuest().getAchievements().addDraftToken();
-            }
-
         }
 
         final boolean saveDraft = SOptionPane.showOptionDialog(localizer.getMessage("lblWouldLikeSaveDraft"), localizer.getMessage("lblSaveDraft") + "?", SOptionPane.QUESTION_ICON, ImmutableList.of(localizer.getMessage("lblYes"), localizer.getMessage("lblNo")), 0) == 0;
@@ -171,37 +166,6 @@ public class QuestTournamentController {
                 || name.contains("Alpha")
                 || name.contains("Beta")
                 || name.contains("Urza");
-    }
-
-    public void spendToken() {
-        final QuestAchievements achievements = FModel.getQuest().getAchievements();
-        if (achievements != null) {
-
-            List<QuestDraftFormat> formats = QuestEventDraft.getAvailableFormats(FModel.getQuest());
-            formats.removeIf(QuestTournamentController::isTokenBannedFormat);
-
-            if (formats.isEmpty()) {
-                SOptionPane.showErrorDialog(localizer.getMessage("lblNoAvailableDraftsMessage"),localizer.getMessage("lblNoAvailableDrafts"));
-                return;
-            }
-
-            final QuestDraftFormat format = SGuiChoose.oneOrNone(localizer.getMessage("lblChooseDraftFormat"), formats);
-            if (format != null) {
-                QuestEventDraft evt = QuestEventDraft.getDraftOrNull(FModel.getQuest(), format);
-                if (evt != null) {
-                    String fee = TextUtil.concatNoSpace(localizer.getMessage("lblEntryFeeOfDraftTournament"), String.valueOf(evt.getEntryFee()), localizer.getMessage("lblWouldLikeCreateTournament"));
-                    if (SOptionPane.showConfirmDialog(fee, localizer.getMessage("lblCreatingDraftTournament"))) {
-                        achievements.spendDraftToken(format);
-    
-                        update();
-                        view.populate();
-                    }
-                } else {
-                    SOptionPane.showErrorDialog(localizer.getMessage("lblUnexpectedCreatingDraftTournament") + format.getName() + localizer.getMessage("lblPleaseReportBug"));
-                    System.err.println("Error creating booster draft tournament (QuestEventDraft object was null): " + format.getName());
-                }
-            }
-        }
     }
 
     public void update() {
@@ -272,8 +236,6 @@ public class QuestTournamentController {
         view.getLblThird().setText(localizer.getMessage("lbl3rdPlace") + achievements.getWinsForPlace(3) + localizer.getMessage("lblTime") + (achievements.getWinsForPlace(3) == 1 ? "" : "s"));
         view.getLblFourth().setText(localizer.getMessage("lbl4thPlace") + achievements.getWinsForPlace(4) + localizer.getMessage("lblTime") + (achievements.getWinsForPlace(4) == 1 ? "" : "s"));
 
-        view.getBtnSpendToken().setText(localizer.getMessage("btnSpendToken") + " (" + achievements.getDraftTokens() + ")");
-        view.getBtnSpendToken().setEnabled(achievements.getDraftTokens() > 0);
     }
 
     private void updatePrepareDeck() {

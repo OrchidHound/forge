@@ -92,13 +92,6 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 }
             }));
-            addItem(new FMenuItem("Add Tournament Token", FSkinImage.QUEST_NOTES, event -> {
-                if (FModel.getQuest().getAchievements() != null) {
-                    FModel.getQuest().getAchievements().addDraftToken();
-                    FModel.getQuest().save();
-                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
-                }
-            }));
             addItem(new FMenuItem("Trigger Card Duplication", FSkinImage.QUEST_COIN, event -> {
                 ThreadUtil.invokeInGameThread(() -> {
                     QuestUtil.performCardDuplication();

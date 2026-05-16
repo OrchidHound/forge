@@ -45,8 +45,6 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
     private final FLabel lblCredits = pnlSelectTournament.add(new FLabel.Builder().icon(FSkinImage.QUEST_COINSTACK)
             .iconScaleFactor(0.75f).font(FSkinFont.get(16)).build());
 
-    private final FLabel btnSpendToken = pnlSelectTournament.add(new FLabel.ButtonBuilder().text(Forge.getLocalizer().getMessage("btnSpendToken") + " (0)").build());
-
     private final FLabel lblInfo = pnlSelectTournament.add(new FLabel.Builder().text(Forge.getLocalizer().getMessage("lblSelectaTournament") + ":")
             .align(Align.center).font(FSkinFont.get(16)).build());
 
@@ -82,10 +80,6 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
     public QuestTournamentsScreen() {
         super();
         controller = new QuestTournamentController(this);
-        btnSpendToken.setCommand(event -> {
-            //must run in background thread to handle alerts
-            FThreads.invokeInBackgroundThread(controller::spendToken);
-        });
         btnEditDeck.setCommand(event -> editDeck(true));
         btnLeaveTournament.setCommand(event -> {
             //must run in background thread to handle alerts
@@ -280,10 +274,6 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
         return lblFourth;
     }
 
-    @Override
-    public FLabel getBtnSpendToken() {
-        return btnSpendToken;
-    }
 
     @Override
     public FButton getBtnLeaveTournament() {
@@ -303,9 +293,7 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
             float gap = Utils.scale(2);
             float y = gap; //move credits label down a couple pixels so it looks better
 
-            float halfWidth = width / 2;
-            lblCredits.setBounds(0, y, halfWidth, lblCredits.getAutoSizeBounds().height);
-            btnSpendToken.setBounds(halfWidth, y, halfWidth - gap, lblCredits.getHeight());
+            lblCredits.setBounds(0, y, width, lblCredits.getAutoSizeBounds().height);
             y += lblCredits.getHeight() + gap;
 
             float x = PADDING;

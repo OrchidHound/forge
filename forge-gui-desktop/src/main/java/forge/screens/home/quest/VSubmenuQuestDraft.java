@@ -102,7 +102,6 @@ public enum VSubmenuQuestDraft implements IVSubmenu<CSubmenuQuestDraft>, IQuestT
 
     private final FLabel btnEditDeck = new FLabel.ButtonBuilder().text(localizer.getMessage("btnEditDeck")).fontSize(24).build();
     private final FLabel btnLeaveTournament = new FLabel.ButtonBuilder().text(localizer.getMessage("btnLeaveTournament")).fontSize(12).build();
-    private final FLabel btnSpendToken = new FLabel.ButtonBuilder().text(localizer.getMessage("btnSpendToken")).fontSize(14).build();
     private final FLabel btnStartMatchSmall = new FLabel.ButtonBuilder().text(localizer.getMessage("btnStartMatchSmall")).fontSize(12).build();
 
     private final PnlMatchup[] matchups = new PnlMatchup[8];
@@ -158,10 +157,7 @@ public enum VSubmenuQuestDraft implements IVSubmenu<CSubmenuQuestDraft>, IQuestT
         pnlStats.add(lblSecond, constraints);
         pnlStats.add(lblThird, constraints);
         pnlStats.add(lblFourth, constraints);
-        pnlStats.add(btnSpendToken, "w 150px!, h 40px!, ax center");
         pnlStats.setOpaque(false);
-
-        btnSpendToken.setToolTipText(localizer.getMessage("btnSpendTokenTT"));
 
     }
 
@@ -219,10 +215,6 @@ public enum VSubmenuQuestDraft implements IVSubmenu<CSubmenuQuestDraft>, IQuestT
 
     public FLabel getLblFourth() {
         return lblFourth;
-    }
-
-    public FLabel getBtnSpendToken() {
-        return btnSpendToken;
     }
 
     public void setMode(Mode mode) {

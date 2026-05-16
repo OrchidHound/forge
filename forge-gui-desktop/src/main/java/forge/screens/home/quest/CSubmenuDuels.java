@@ -210,10 +210,6 @@ public enum CSubmenuDuels implements ICDoc {
 				itemCredits.addActionListener(ae -> { FModel.getQuest().getAssets().addCredits(10000); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
 				testMenu.add(itemCredits);
 
-				javax.swing.JMenuItem itemToken = new javax.swing.JMenuItem("Add Tournament Token");
-				itemToken.addActionListener(ae -> { achievements.addDraftToken(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
-				testMenu.add(itemToken);
-
 				javax.swing.JMenuItem itemDuplicate = new javax.swing.JMenuItem("Trigger Card Duplication");
 				itemDuplicate.addActionListener(ae -> { forge.gamemodes.quest.QuestUtil.performCardDuplication(); FModel.getQuest().save(); CSubmenuDuels.this.update(); });
 				testMenu.add(itemDuplicate);

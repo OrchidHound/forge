@@ -477,7 +477,6 @@ public class QuestWinLoseController {
         final List<PaperCard> cardsWon = new ArrayList<>();
         List<PaperCard> cardsToAdd;
         String typeWon;
-        boolean addDraftToken = false;
 
         switch (currentStreak) {
         case 3:
@@ -511,7 +510,6 @@ public class QuestWinLoseController {
                 cardsWon.addAll(qData.getCards().addRandomCards(15, PaperCardPredicates.IS_RARE));
                 typeWon = "rare";
             }
-            addDraftToken = true;
             break;
         case 0: //The 50th win in the streak is 0, since (50 % 50 == 0)
             cardsToAdd = qData.getCards().addRandomCards(10, PaperCardPredicates.IS_MYTHIC_RARE);
@@ -522,15 +520,9 @@ public class QuestWinLoseController {
                 cardsWon.addAll(qData.getCards().addRandomCards(30, PaperCardPredicates.IS_RARE));
                 typeWon = "rare";
             }
-            addDraftToken = true;
             break;
         default:
             return;
-        }
-
-        if (addDraftToken) {
-            view.showMessage(Localizer.getInstance().getMessage("lblAchieving25WinStreakAwarded"), Localizer.getInstance().getMessage("lblBonusDraftTokenReward"), FSkinProp.ICO_QUEST_COIN);
-            qData.getAchievements().addDraftToken();
         }
 
         if (!cardsWon.isEmpty()) {

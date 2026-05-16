@@ -34,7 +34,6 @@ public enum CSubmenuQuestDraft implements ICDoc {
         view.getBtnStartMatch().addActionListener(nextMatchStart);
 
         view.getBtnStartMatchSmall().setCommand((UiCommand) () -> controller.startNextMatch());
-        view.getBtnSpendToken().setCommand((UiCommand) () -> controller.spendToken());
         view.getBtnEditDeck().setCommand((UiCommand) () -> view.editDeck(true));
         view.getBtnLeaveTournament().setCommand((UiCommand) () -> controller.endTournamentAndAwardPrizes());
     }
