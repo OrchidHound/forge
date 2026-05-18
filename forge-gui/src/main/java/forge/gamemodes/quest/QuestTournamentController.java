@@ -160,14 +160,6 @@ public class QuestTournamentController {
         view.populate();
     }
 
-    public static boolean isTokenBannedFormat(final QuestEventDraft.QuestDraftFormat format) {
-        final String name = format.getName();
-        return name.contains("Master")
-                || name.contains("Alpha")
-                || name.contains("Beta")
-                || name.contains("Urza");
-    }
-
     public void update() {
         if (FModel.getQuest().getAchievements() == null) {
             view.setMode(Mode.EMPTY);

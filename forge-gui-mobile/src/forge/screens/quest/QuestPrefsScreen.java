@@ -72,7 +72,6 @@ public class QuestPrefsScreen extends FScreen {
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblExcludePromosFromRewardPool"), QPref.EXCLUDE_PROMOS_FROM_POOL, PrefsGroup.REWARDS));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblCardDuplicationChance"), QPref.CARD_DUPLICATION_CHANCE, PrefsGroup.REWARDS));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblSpecialShopChance"), QPref.SPECIAL_SHOP_CHANCE, PrefsGroup.REWARDS));
-        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblBannedTournamentChance"), QPref.BANNED_TOURNAMENT_CHANCE, PrefsGroup.REWARDS));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblCardExchangeChance"), QPref.CARD_EXCHANGE_CHANCE, PrefsGroup.REWARDS));
 
         //Booster Pack Ratios

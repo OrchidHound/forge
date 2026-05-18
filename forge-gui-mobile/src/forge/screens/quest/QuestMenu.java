@@ -105,13 +105,6 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::showSpellShop);
                 });
             }));
-            addItem(new FMenuItem("Trigger Special Tournament", FSkinImage.QUEST_BIG_SHIELD, event -> {
-                ThreadUtil.invokeInGameThread(() -> {
-                    QuestUtil.performBannedTournamentEvent();
-                    FModel.getQuest().save();
-                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
-                });
-            }));
             addItem(new FMenuItem("Trigger Card Exchange", FSkinImage.QUEST_COIN, event -> {
                 ThreadUtil.invokeInGameThread(() -> {
                     forge.item.PaperCard removed = QuestUtil.performCardExchangeEvent();
