@@ -818,6 +818,7 @@ public class QuestEventDraft implements IQuestEvent {
             }
         }
 
+        possibleFormats.removeIf(f -> f.getName().toLowerCase().contains("alchemy"));
         Collections.sort(possibleFormats);
         return possibleFormats;
     }
