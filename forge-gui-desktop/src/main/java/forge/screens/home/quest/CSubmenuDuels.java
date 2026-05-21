@@ -232,6 +232,17 @@ public enum CSubmenuDuels implements ICDoc {
 				});
 				testMenu.add(itemCardExchange);
 
+				javax.swing.JMenuItem itemHalfLifeGambit = new javax.swing.JMenuItem("Trigger Half-Life Gambit");
+				itemHalfLifeGambit.addActionListener(ae -> {
+					forge.item.PaperCard card = forge.gamemodes.quest.QuestUtil.triggerHalfLifeGambitTest();
+					if (card != null) {
+						FModel.getQuest().save();
+						forge.gui.util.SGuiChoose.reveal("Half-Life Gambit Victory! You've earned a duplicate:", java.util.Collections.singletonList(card));
+					}
+					CSubmenuDuels.this.update();
+				});
+				testMenu.add(itemHalfLifeGambit);
+
 				testMenu.addSeparator();
 
 				javax.swing.JMenuItem itemResetShop = new javax.swing.JMenuItem("Reset Special Shop");

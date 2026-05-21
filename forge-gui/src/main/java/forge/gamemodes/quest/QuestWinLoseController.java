@@ -168,6 +168,12 @@ public class QuestWinLoseController {
                     awardCardExchange();
                 }
 
+                // Half-life gambit reward
+                if (QuestUtil.isHalfLifeHandicapActive()) {
+                    QuestUtil.setHalfLifeHandicapActive(false);
+                    awardHandicapDuplicate();
+                }
+
                 // Random rare given at 50% chance (65% with luck upgrade)
                 if (getLuckyCoinResult()) {
                     awardRandomRare("You've won a random rare.");
@@ -752,6 +758,19 @@ public class QuestWinLoseController {
         if (!reward.isEmpty()) {
             view.showCards("In return, you received:", reward);
         }
+    }
+
+    private void awardHandicapDuplicate() {
+        final List<PaperCard> collection = qData.getCards().getCardpool().toFlatList();
+        if (collection.isEmpty()) { return; }
+        collection.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        final PaperCard card = GuiBase.getInterface().chooseCard(
+                "Choose a Card to Duplicate",
+                "Select a card from your collection to receive a duplicate copy.",
+                collection);
+        if (card == null) { return; }
+        qData.getCards().addSingleCard(card, 1);
+        view.showCards("Half-Life Gambit Victory! You've earned a duplicate:", Collections.singletonList(card));
     }
 
     private void penalizeLoss() {

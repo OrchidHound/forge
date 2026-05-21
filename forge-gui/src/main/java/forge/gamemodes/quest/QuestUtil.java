@@ -252,6 +252,15 @@ public class QuestUtil {
 
     private static QuestEvent event;
     private static QuestEventDraft draftEvent;
+    private static boolean halfLifeHandicapActive = false;
+
+    public static boolean isHalfLifeHandicapActive() {
+        return halfLifeHandicapActive;
+    }
+
+    public static void setHalfLifeHandicapActive(boolean active) {
+        halfLifeHandicapActive = active;
+    }
 
     /**
      * <p>
@@ -562,6 +571,32 @@ public class QuestUtil {
         return new ArrayList<>(allCards.subList(0, Math.min(count, allCards.size())));
     }
 
+    /**
+     * Test helper: shows the half-life gambit dialog using the player's current quest life,
+     * and if accepted awards the duplicate card immediately. Returns the awarded card or null.
+     */
+    public static PaperCard triggerHalfLifeGambitTest() {
+        final QuestController qData = FModel.getQuest();
+        final int regularLife = qData.getAssets().getLife(qData.getMode());
+        final int halfLife = regularLife / 2;
+        final boolean accepted = SOptionPane.showConfirmDialog(
+            "A challenger's gambit!\n\nWould you like to start this duel with " + halfLife
+                + " life instead of " + regularLife + "?\n\n"
+                + "Win despite the handicap and you'll receive a duplicate of a card of your choice.",
+            "Half-Life Gambit");
+        if (!accepted) { return null; }
+        final List<PaperCard> collection = qData.getCards().getCardpool().toFlatList();
+        if (collection.isEmpty()) { return null; }
+        collection.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        final PaperCard card = GuiBase.getInterface().chooseCard(
+                "Choose a Card to Duplicate",
+                "Select a card from your collection to receive a duplicate copy.",
+                collection);
+        if (card == null) { return null; }
+        qData.getCards().addSingleCard(card, 1);
+        return card;
+    }
+
     /** */
     public static void showBazaar() {
         final Localizer localizer = Localizer.getInstance();
@@ -643,6 +678,23 @@ public class QuestUtil {
             humanStart.setStartingLife(lifeHuman);
         } else {
             humanStart.setStartingLife(qData.getAssets().getLife(qData.getMode()) + extraLifeHuman);
+        }
+
+        // Half-life gambit offer
+        halfLifeHandicapActive = false;
+        final int halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE);
+        if (MyRandom.getRandom().nextFloat() < halfLifeGambitChance / 1000f) {
+            final int regularLife = humanStart.getStartingLife();
+            final int halfLife = regularLife / 2;
+            final boolean accepted = SOptionPane.showConfirmDialog(
+                "A challenger's gambit!\n\nWould you like to start this duel with " + halfLife
+                    + " life instead of " + regularLife + "?\n\n"
+                    + "Win despite the handicap and you'll receive a duplicate of a card of your choice.",
+                "Half-Life Gambit");
+            if (accepted) {
+                humanStart.setStartingLife(halfLife);
+                halfLifeHandicapActive = true;
+            }
         }
 
         if (useBazaar) {

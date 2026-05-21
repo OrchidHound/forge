@@ -73,6 +73,7 @@ public class QuestPrefsScreen extends FScreen {
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblCardDuplicationChance"), QPref.CARD_DUPLICATION_CHANCE, PrefsGroup.REWARDS));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblSpecialShopChance"), QPref.SPECIAL_SHOP_CHANCE, PrefsGroup.REWARDS));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblCardExchangeChance"), QPref.CARD_EXCHANGE_CHANCE, PrefsGroup.REWARDS));
+        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblHalfLifeGambitChance"), QPref.HALF_LIFE_GAMBIT_CHANCE, PrefsGroup.REWARDS));
 
         //Booster Pack Ratios
         scroller.add(new PrefsHeader(Forge.getLocalizer().getMessage("lblBoosterPackRatios"), FSkinImage.QUEST_BOOK, PrefsGroup.BOOSTER));

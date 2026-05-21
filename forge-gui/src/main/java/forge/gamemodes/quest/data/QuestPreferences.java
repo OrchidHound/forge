@@ -207,7 +207,10 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
         SPECIAL_SHOP_CHANCE("100"),
 
         // Chance of the card exchange event per duel win, stored per-mille (e.g. 150 = 15%)
-        CARD_EXCHANGE_CHANCE("150");
+        CARD_EXCHANGE_CHANCE("150"),
+
+        // Chance of the half-life gambit event per duel start, stored per-mille (e.g. 150 = 15%)
+        HALF_LIFE_GAMBIT_CHANCE("150");
 
         private final String strDefaultVal;
 
@@ -327,6 +330,7 @@ public class QuestPreferences extends PreferencesStore<QuestPreferences.QPref> i
             case CARD_DUPLICATION_CHANCE:
             case SPECIAL_SHOP_CHANCE:
             case CARD_EXCHANGE_CHANCE:
+            case HALF_LIFE_GAMBIT_CHANCE:
                 if (val < 0 || val > 1000) {
                     return "Value must be between 0 and 1000 (e.g. 75 = 7.5%).";
                 }

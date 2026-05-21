@@ -118,6 +118,16 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
             }));
+            addItem(new FMenuItem("Trigger Half-Life Gambit", FSkinImage.QUEST_LIFE, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    forge.item.PaperCard card = QuestUtil.triggerHalfLifeGambitTest();
+                    if (card != null) {
+                        FModel.getQuest().save();
+                        forge.gui.util.SGuiChoose.reveal("Half-Life Gambit Victory! You've earned a duplicate:", java.util.Collections.singletonList(card));
+                    }
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                });
+            }));
             addItem(new FMenuItem("Reset Special Shop", FSkinImage.QUEST_BOOK, event -> {
                 QuestSpellShop.clearSpecialShop();
                 FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
