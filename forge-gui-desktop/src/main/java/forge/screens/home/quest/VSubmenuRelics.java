@@ -15,6 +15,7 @@ import forge.screens.home.EMenuGroup;
 import forge.screens.home.IVSubmenu;
 import forge.screens.home.LblHeader;
 import forge.screens.home.VHomeUI;
+import forge.toolbox.FComboBoxWrapper;
 import forge.toolbox.FLabel;
 import forge.toolbox.FScrollPanel;
 import forge.util.Localizer;
@@ -84,6 +85,26 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
                         .fontSize(13)
                         .fontAlign(SwingConstants.LEFT)
                         .build(), "w 100%!, gap 10px 0 0 8px");
+
+                if (relic == QuestRelicType.MOOD_RING) {
+                    pnlRelics.add(new FLabel.Builder()
+                            .text("Active Color:")
+                            .fontSize(13)
+                            .fontAlign(SwingConstants.LEFT)
+                            .build(), "gap 10px 0 8px 2px");
+                    final FComboBoxWrapper<String> cbxColor = new FComboBoxWrapper<>();
+                    for (final String c : new String[]{"Off", "White", "Blue", "Black", "Red", "Green"}) {
+                        cbxColor.addItem(c);
+                    }
+                    final String saved = FModel.getQuest().getAssets().getRelicData(QuestRelicType.MOOD_RING);
+                    cbxColor.setSelectedItem(saved != null && !saved.isEmpty() ? saved : "Off");
+                    cbxColor.addActionListener(e -> {
+                        final String sel = (String) cbxColor.getSelectedItem();
+                        FModel.getQuest().getAssets().setRelicData(QuestRelicType.MOOD_RING, "Off".equals(sel) ? "" : sel);
+                        FModel.getQuest().save();
+                    });
+                    cbxColor.addTo(pnlRelics, "gap 10px 0 0 8px, h 26px!");
+                }
             }
         }
 

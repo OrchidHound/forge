@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class QuestWinLoseController {
     private final GameView lastGame;
@@ -560,6 +561,10 @@ public class QuestWinLoseController {
     private void awardBooster() {
         List<PaperCard> cardsWon;
 
+        final String moodRingColor = qData.getAssets().hasRelic(QuestRelicType.MOOD_RING)
+                ? qData.getAssets().getRelicData(QuestRelicType.MOOD_RING) : null;
+        final boolean moodRingActive = moodRingColor != null && !moodRingColor.isEmpty();
+
         String title;
         if (qData.getFormat() == null) {
 
@@ -579,7 +584,12 @@ public class QuestWinLoseController {
             final GameFormat selected = SGuiChoose.getChoices(Localizer.getInstance().getMessage("lblChooseBonusBoosterFormat"), 1, 1, formats, pref, null).get(0);
             FModel.getQuestPreferences().setPref(QPref.BOOSTER_FORMAT, selected.toString());
 
-            cardsWon = qData.getCards().generateQuestBooster(selected.getFilterPrinted());
+            if (moodRingActive) {
+                cardsWon = qData.getCards().generateQuestBooster(
+                        selected.getFilterPrinted().and(c -> colorMatchesMoodRing(c, moodRingColor)));
+            } else {
+                cardsWon = qData.getCards().generateQuestBooster(selected.getFilterPrinted());
+            }
             qData.getCards().addAllCards(cardsWon);
 
             title = Localizer.getInstance().getMessage("lblBonusFormatBoosterPack", selected.getName());
@@ -629,7 +639,12 @@ public class QuestWinLoseController {
 
             final CardEdition chooseEd = SGuiChoose.one(Localizer.getInstance().getMessage("lblChooseBonusBoosterSet"), options);
 
-            if (customBooster) {
+            if (moodRingActive) {
+                List<PaperCard> setCards = FModel.getMagicDb().getCommonCards().getAllCards(
+                        PaperCardPredicates.printedInSet(chooseEd.getCode()));
+                setCards = setCards.stream().filter(c -> colorMatchesMoodRing(c, moodRingColor)).collect(Collectors.toList());
+                cardsWon = new UnOpenedProduct(getBoosterTemplate(), setCards).get();
+            } else if (customBooster) {
                 List<PaperCard> cards = FModel.getMagicDb().getCommonCards().getAllCards(PaperCardPredicates.printedInSet(chooseEd.getCode()));
                 final IUnOpenedProduct product = new UnOpenedProduct(getBoosterTemplate(), cards);
                 cardsWon = product.get();
@@ -642,7 +657,6 @@ public class QuestWinLoseController {
                     setAffix = type;
                 }
                 product = new UnOpenedProduct(FModel.getMagicDb().getBoosters().get(chooseEd.getCode() + setAffix));
-
                 cardsWon = product.get();
             }
 
@@ -808,6 +822,18 @@ public class QuestWinLoseController {
      *
      * @return boolean
      */
+    private boolean colorMatchesMoodRing(final PaperCard card, final String color) {
+        final forge.card.ColorSet cs = card.getRules().getColor();
+        switch (color) {
+            case "White": return cs.hasWhite();
+            case "Blue":  return cs.hasBlue();
+            case "Black": return cs.hasBlack();
+            case "Red":   return cs.hasRed();
+            case "Green": return cs.hasGreen();
+            default:      return true;
+        }
+    }
+
     private float getEventChance(QPref pref) {
         float chance = FModel.getQuestPreferences().getPrefInt(pref) / 1000f;
         if (qData.getAssets().hasItem(QuestItemType.LUCKY_MOX)) {

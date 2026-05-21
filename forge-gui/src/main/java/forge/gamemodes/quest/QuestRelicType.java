@@ -8,7 +8,11 @@ public enum QuestRelicType {
 
     ALCHEMY_KIT("Alchemy Kit",
             "After each win, you may offer up to 2 rare/mythic cards from your collection "
-            + "in exchange for that many random rare/mythic cards.");
+            + "in exchange for that many random rare/mythic cards."),
+
+    MOOD_RING("Mood Ring",
+            "Tints your fortune with a chosen hue. Select a color to restrict all booster pack "
+            + "rewards to cards of that color only. Toggle off at any time in the Relics menu.");
 
     private final String displayName;
     private final String description;

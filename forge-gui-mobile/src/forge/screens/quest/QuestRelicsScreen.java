@@ -7,10 +7,12 @@ import forge.assets.FSkinFont;
 import forge.gamemodes.quest.QuestRelicType;
 import forge.model.FModel;
 import forge.screens.FScreen;
+import forge.toolbox.FComboBox;
 import forge.toolbox.FDisplayObject;
 import forge.toolbox.FLabel;
 import forge.toolbox.FOptionPane;
 import forge.toolbox.FScrollPane;
+import forge.util.Utils;
 
 public class QuestRelicsScreen extends FScreen {
     private static final float PADDING = FOptionPane.PADDING;
@@ -23,9 +25,14 @@ public class QuestRelicsScreen extends FScreen {
             float w = visibleWidth - 2 * PADDING;
             for (FDisplayObject obj : getChildren()) {
                 if (obj.isVisible()) {
-                    float h = ((FLabel) obj).getAutoSizeBounds().height;
+                    float h;
+                    if (obj instanceof FLabel) {
+                        h = ((FLabel) obj).getAutoSizeBounds().height;
+                    } else {
+                        h = obj.getHeight() > 0 ? obj.getHeight() : Utils.AVG_FINGER_HEIGHT;
+                    }
                     obj.setBounds(x, y, w, h);
-                    y += h + PADDING;
+                    y += obj.getHeight() + PADDING;
                 }
             }
             return new ScrollBounds(visibleWidth, y);
@@ -60,6 +67,24 @@ public class QuestRelicsScreen extends FScreen {
                         .text(relic.getDescription())
                         .font(FSkinFont.get(13))
                         .build());
+
+                if (relic == QuestRelicType.MOOD_RING) {
+                    scroller.add(new FLabel.Builder()
+                            .text("Active Color:")
+                            .font(FSkinFont.get(13))
+                            .build());
+                    final FComboBox<String> cbxColor = scroller.add(new FComboBox<>());
+                    for (final String c : new String[]{"Off", "White", "Blue", "Black", "Red", "Green"}) {
+                        cbxColor.addItem(c);
+                    }
+                    final String saved = FModel.getQuest().getAssets().getRelicData(QuestRelicType.MOOD_RING);
+                    cbxColor.setSelectedItem(saved != null && !saved.isEmpty() ? saved : "Off");
+                    cbxColor.setDropDownChangeHandler(e -> {
+                        final String sel = cbxColor.getSelectedItem();
+                        FModel.getQuest().getAssets().setRelicData(QuestRelicType.MOOD_RING, "Off".equals(sel) ? "" : sel);
+                        FModel.getQuest().save();
+                    });
+                }
             }
         }
 

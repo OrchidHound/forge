@@ -70,6 +70,9 @@ public class QuestAssets {
     /** Relics held by the player during this quest run. */
     private List<QuestRelicType> relics = new ArrayList<>();
 
+    /** Per-relic string state (e.g. selected color for Mood Ring). */
+    private Map<QuestRelicType, String> relicData = new HashMap<>();
+
     // Much the same like other map, but keyed by string (to support a lot of custom pets)
     private final Map<String, QuestItemCondition> combatPets = new HashMap<>();
     
@@ -87,6 +90,15 @@ public class QuestAssets {
 
     public final List<QuestRelicType> getRelics() {
         return relics != null ? Collections.unmodifiableList(relics) : Collections.emptyList();
+    }
+
+    public final String getRelicData(final QuestRelicType relic) {
+        return relicData != null ? relicData.get(relic) : null;
+    }
+
+    public final void setRelicData(final QuestRelicType relic, final String data) {
+        if (relicData == null) { relicData = new HashMap<>(); }
+        relicData.put(relic, data);
     }
 
     /**

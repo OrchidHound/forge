@@ -640,103 +640,103 @@ public class QuestUtil {
             qData.getDuelsManager().randomizeOpponents();
             qData.setCurrentEvent(event);
             qData.save();
+
+            int extraLifeHuman = 0;
+            Integer lifeHuman = null;
+            boolean useBazaar = true;
+            Boolean forceAnte = null;
+
+            //Generate a life modifier based on this quest's variant as held in the Quest Controller's DeckConstructionRules
+            int variantLifeModifier = 0;
+
+            switch(FModel.getQuest().getDeckConstructionRules()){
+                case Default: break;
+                case Commander: variantLifeModifier = 20; break;
+            }
+
+            int lifeAI = 20 + variantLifeModifier;
+
+            if (event instanceof QuestEventChallenge) {
+                final QuestEventChallenge qc = ((QuestEventChallenge) event);
+                lifeAI = qc.getAILife();
+                lifeHuman = qc.getHumanLife();
+
+                if (qData.getAssets().hasItem(QuestItemType.ZEPPELIN)) {
+                    extraLifeHuman = 3;
+                }
+
+                useBazaar = qc.isUseBazaar();
+                forceAnte = qc.isForceAnte();
+            }
+
+            final RegisteredPlayer humanStart = getRegisteredPlayerByVariant(getDeckForNewGame());
+
+            final RegisteredPlayer aiStart = getRegisteredPlayerByVariant(event.getEventDeck());
+
+            if (lifeHuman != null) {
+                humanStart.setStartingLife(lifeHuman);
+            } else {
+                humanStart.setStartingLife(qData.getAssets().getLife(qData.getMode()) + extraLifeHuman);
+            }
+
+            // Half-life gambit offer
+            halfLifeHandicapActive = false;
+            float halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE) / 1000f;
+            if (qData.getAssets().hasItem(QuestItemType.LUCKY_MOX)) {
+                halfLifeGambitChance *= 1.5f;
+            }
+            if (MyRandom.getRandom().nextFloat() < halfLifeGambitChance) {
+                final int regularLife = humanStart.getStartingLife();
+                final int halfLife = regularLife / 2;
+                final boolean accepted = SOptionPane.showConfirmDialog(
+                    "A challenger's gambit!\n\nWould you like to start this duel with " + halfLife
+                        + " life instead of " + regularLife + "?\n\n"
+                        + "Win despite the handicap and you'll receive a duplicate of a card of your choice.",
+                    "Half-Life Gambit");
+                if (accepted) {
+                    humanStart.setStartingLife(halfLife);
+                    halfLifeHandicapActive = true;
+                }
+            }
+
+            if (useBazaar) {
+                humanStart.addExtraCardsOnBattlefield(QuestUtil.getHumanStartingCards(qData, event));
+                aiStart.setStartingLife(lifeAI);
+                aiStart.addExtraCardsOnBattlefield(QuestUtil.getComputerStartingCards(event));
+            }
+
+            final List<RegisteredPlayer> starter = new ArrayList<>();
+            starter.add(humanStart.setPlayer(GamePlayerUtil.getQuestPlayer()));
+
+            final LobbyPlayer aiPlayer = GamePlayerUtil.createAiPlayer(event.getOpponentName() == null ? event.getTitle() : event.getOpponentName(), event.getProfile());
+            starter.add(aiStart.setPlayer(aiPlayer));
+
+            final boolean useRandomFoil = FModel.getPreferences().getPrefBoolean(FPref.UI_RANDOM_FOIL);
+            for (final RegisteredPlayer rp : starter) {
+                rp.setRandomFoil(useRandomFoil);
+            }
+            boolean useAnte = FModel.getPreferences().getPrefBoolean(FPref.UI_ANTE);
+            final boolean matchAnteRarity = FModel.getPreferences().getPrefBoolean(FPref.UI_ANTE_MATCH_RARITY);
+            if (forceAnte != null) {
+                useAnte = forceAnte;
+            }
+            final GameRules rules = new GameRules(GameType.Quest);
+            rules.setPlayForAnte(useAnte);
+            rules.setMatchAnteRarity(matchAnteRarity);
+            rules.setGamesPerMatch(qData.getMatchLength());
+            rules.setOrderCombatants(FModel.getPreferences().getPrefBoolean(FPref.LEGACY_ORDER_COMBATANTS));
+            rules.setUseGrayText(FModel.getPreferences().getPrefBoolean(FPref.UI_GRAY_INACTIVE_TEXT));
+
+            final TreeSet<GameType> variant = new TreeSet<>();
+            if(FModel.getQuest().getDeckConstructionRules() == DeckConstructionRules.Commander){
+                variant.add(GameType.Commander);
+            }
+
+            final HostedMatch hostedMatch = GuiBase.getInterface().hostMatch();
+            final IGuiGame gui = GuiBase.getInterface().getNewGuiGame();
+            gui.setPlayerAvatar(aiPlayer, event);
+            FThreads.invokeInEdtNowOrLater(() -> hostedMatch.startMatch(rules, variant, starter, ImmutableMap.of(humanStart, gui), null));
         });
-
-        int extraLifeHuman = 0;
-        Integer lifeHuman = null;
-        boolean useBazaar = true;
-        Boolean forceAnte = null;
-
-        //Generate a life modifier based on this quest's variant as held in the Quest Controller's DeckConstructionRules
-        int variantLifeModifier = 0;
-
-        switch(FModel.getQuest().getDeckConstructionRules()){
-            case Default: break;
-            case Commander: variantLifeModifier = 20; break;
-        }
-
-        int lifeAI = 20 + variantLifeModifier;
-
-        if (event instanceof QuestEventChallenge) {
-            final QuestEventChallenge qc = ((QuestEventChallenge) event);
-            lifeAI = qc.getAILife();
-            lifeHuman = qc.getHumanLife();
-
-            if (qData.getAssets().hasItem(QuestItemType.ZEPPELIN)) {
-                extraLifeHuman = 3;
-            }
-
-            useBazaar = qc.isUseBazaar();
-            forceAnte = qc.isForceAnte();
-        }
-
-        final RegisteredPlayer humanStart = getRegisteredPlayerByVariant(getDeckForNewGame());
-
-        final RegisteredPlayer aiStart = getRegisteredPlayerByVariant(event.getEventDeck());
-
-        if (lifeHuman != null) {
-            humanStart.setStartingLife(lifeHuman);
-        } else {
-            humanStart.setStartingLife(qData.getAssets().getLife(qData.getMode()) + extraLifeHuman);
-        }
-
-        // Half-life gambit offer
-        halfLifeHandicapActive = false;
-        float halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE) / 1000f;
-        if (qData.getAssets().hasItem(QuestItemType.LUCKY_MOX)) {
-            halfLifeGambitChance *= 1.5f;
-        }
-        if (MyRandom.getRandom().nextFloat() < halfLifeGambitChance) {
-            final int regularLife = humanStart.getStartingLife();
-            final int halfLife = regularLife / 2;
-            final boolean accepted = SOptionPane.showConfirmDialog(
-                "A challenger's gambit!\n\nWould you like to start this duel with " + halfLife
-                    + " life instead of " + regularLife + "?\n\n"
-                    + "Win despite the handicap and you'll receive a duplicate of a card of your choice.",
-                "Half-Life Gambit");
-            if (accepted) {
-                humanStart.setStartingLife(halfLife);
-                halfLifeHandicapActive = true;
-            }
-        }
-
-        if (useBazaar) {
-            humanStart.addExtraCardsOnBattlefield(QuestUtil.getHumanStartingCards(qData, event));
-            aiStart.setStartingLife(lifeAI);
-            aiStart.addExtraCardsOnBattlefield(QuestUtil.getComputerStartingCards(event));
-        }
-
-        final List<RegisteredPlayer> starter = new ArrayList<>();
-        starter.add(humanStart.setPlayer(GamePlayerUtil.getQuestPlayer()));
-
-        final LobbyPlayer aiPlayer = GamePlayerUtil.createAiPlayer(event.getOpponentName() == null ? event.getTitle() : event.getOpponentName(), event.getProfile());
-        starter.add(aiStart.setPlayer(aiPlayer));
-
-        final boolean useRandomFoil = FModel.getPreferences().getPrefBoolean(FPref.UI_RANDOM_FOIL);
-        for (final RegisteredPlayer rp : starter) {
-            rp.setRandomFoil(useRandomFoil);
-        }
-        boolean useAnte = FModel.getPreferences().getPrefBoolean(FPref.UI_ANTE);
-        final boolean matchAnteRarity = FModel.getPreferences().getPrefBoolean(FPref.UI_ANTE_MATCH_RARITY);
-        if (forceAnte != null) {
-            useAnte = forceAnte;
-        }
-        final GameRules rules = new GameRules(GameType.Quest);
-        rules.setPlayForAnte(useAnte);
-        rules.setMatchAnteRarity(matchAnteRarity);
-        rules.setGamesPerMatch(qData.getMatchLength());
-        rules.setOrderCombatants(FModel.getPreferences().getPrefBoolean(FPref.LEGACY_ORDER_COMBATANTS));
-        rules.setUseGrayText(FModel.getPreferences().getPrefBoolean(FPref.UI_GRAY_INACTIVE_TEXT));
-
-        final TreeSet<GameType> variant = new TreeSet<>();
-        if(FModel.getQuest().getDeckConstructionRules() == DeckConstructionRules.Commander){
-            variant.add(GameType.Commander);
-        }
-
-        final HostedMatch hostedMatch = GuiBase.getInterface().hostMatch();
-        final IGuiGame gui = GuiBase.getInterface().getNewGuiGame();
-        gui.setPlayerAvatar(aiPlayer, event);
-        FThreads.invokeInEdtNowOrLater(() -> hostedMatch.startMatch(rules, variant, starter, ImmutableMap.of(humanStart, gui), null));
     }
 
     /**

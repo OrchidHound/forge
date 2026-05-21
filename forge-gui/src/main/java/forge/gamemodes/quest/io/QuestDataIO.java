@@ -35,6 +35,7 @@ import forge.deck.DeckSection;
 import forge.gamemodes.quest.QuestController;
 import forge.gamemodes.quest.QuestEventDraft;
 import forge.gamemodes.quest.QuestMode;
+import forge.gamemodes.quest.QuestRelicType;
 import forge.gamemodes.quest.bazaar.QuestItemType;
 import forge.gamemodes.quest.data.*;
 import forge.gamemodes.quest.data.QuestPreferences.QPref;
@@ -96,6 +97,7 @@ public class QuestDataIO {
         xStream.allowTypeHierarchy(DeckGroup.class);
         xStream.allowTypeHierarchy(EnumMap.class);
         xStream.allowTypeHierarchy(QuestItemType.class);
+        xStream.allowTypeHierarchy(QuestRelicType.class);
         // allow any type from the same package
         xStream.allowTypesByWildcard(new String[] {
                 QuestDataIO.class.getPackage().getName()+".*",
