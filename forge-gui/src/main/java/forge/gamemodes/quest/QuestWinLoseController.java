@@ -8,6 +8,7 @@ import forge.game.GameFormat;
 import forge.game.GameOutcome;
 import forge.game.GameView;
 import forge.game.player.*;
+import forge.gamemodes.quest.QuestRelicType;
 import forge.gamemodes.quest.bazaar.QuestItemType;
 import forge.gamemodes.quest.data.QuestPreferences;
 import forge.gamemodes.quest.data.QuestPreferences.DifficultyPrefs;
@@ -168,6 +169,11 @@ public class QuestWinLoseController {
                 // Alchemy table event
                 if (MyRandom.getRandom().nextFloat() < getEventChance(QPref.ALCHEMY_TABLE_CHANCE)) {
                     awardAlchemyTable();
+                }
+
+                // Relic effects
+                if (qData.getAssets().hasRelic(QuestRelicType.ALCHEMY_KIT)) {
+                    awardAlchemyKitExchange();
                 }
 
                 // Half-life gambit reward
@@ -759,6 +765,13 @@ public class QuestWinLoseController {
         view.showCards("You sacrificed: " + removed.getName(), List.of(removed));
         if (!reward.isEmpty()) {
             view.showCards("In return, you received:", reward);
+        }
+    }
+
+    private void awardAlchemyKitExchange() {
+        final List<PaperCard> reward = QuestUtil.performAlchemyKitExchange();
+        if (!reward.isEmpty()) {
+            view.showCards("Alchemy Kit: Your cards have been transformed! You received:", reward);
         }
     }
 

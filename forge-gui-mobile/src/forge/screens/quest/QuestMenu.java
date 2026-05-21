@@ -34,6 +34,7 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
     private static final QuestDecksScreen decksScreen = new QuestDecksScreen();
     private static final QuestDuelsScreen duelsScreen = new QuestDuelsScreen();
     private static final QuestPrefsScreen prefsScreen = new QuestPrefsScreen();
+    private static final QuestRelicsScreen relicsScreen = new QuestRelicsScreen();
     private static final QuestSpellShopScreen spellShopScreen = new QuestSpellShopScreen();
     private static final QuestStatsScreen statsScreen = new QuestStatsScreen();
     private static final QuestTournamentsScreen tournamentsScreen = new QuestTournamentsScreen();
@@ -44,6 +45,7 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
     private static final FMenuItem decksItem = new FMenuItem(Forge.getLocalizer().getMessage("lblQuestDecks"), FSkinImage.QUEST_BIG_BAG, event -> setCurrentScreen(decksScreen));
     private static final FMenuItem spellShopItem = new FMenuItem(Forge.getLocalizer().getMessage("lblSpellShop"), FSkinImage.QUEST_BOOK, event -> setCurrentScreen(spellShopScreen));
     private static final FMenuItem bazaarItem = new FMenuItem(Forge.getLocalizer().getMessage("lblBazaar"), FSkinImage.QUEST_BOTTLES, event -> setCurrentScreen(bazaarScreen));
+    private static final FMenuItem relicsItem = new FMenuItem(Forge.getLocalizer().getMessage("lblRelics"), FSkinImage.QUEST_BIG_CHARM, event -> setCurrentScreen(relicsScreen));
     private static final FMenuItem statsItem = new FMenuItem(Forge.getLocalizer().getMessage("lblStatistics"), FSkinImage.MENU_STATS, event -> setCurrentScreen(statsScreen));
     private static final FMenuItem unlockSetsItem = new FMenuItem(Forge.getLocalizer().getMessage("btnUnlockSets"), FSkinImage.QUEST_MAP, event -> {
         //invoke in background thread so prompts can work
@@ -138,6 +140,17 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
             }));
+            addItem(new FMenuItem("Add Relic", FSkinImage.QUEST_BIG_SWORD, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    forge.gamemodes.quest.QuestRelicType relic = forge.gui.util.SGuiChoose.oneOrNone(
+                        "Choose a relic to add:", java.util.Arrays.asList(forge.gamemodes.quest.QuestRelicType.values()));
+                    if (relic != null) {
+                        FModel.getQuest().getAssets().addRelic(relic);
+                        FModel.getQuest().save();
+                        FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                    }
+                });
+            }));
             addItem(new FMenuItem("Reset Special Shop", FSkinImage.QUEST_BOOK, event -> {
                 QuestSpellShop.clearSpecialShop();
                 FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
@@ -172,6 +185,9 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
         }
         else if (spellShopItem.isSelected()) {
             spellShopScreen.update();
+        }
+        else if (relicsItem.isSelected()) {
+            relicsScreen.update();
         }
         else if (statsItem.isSelected()) {
             statsScreen.update();
@@ -262,6 +278,7 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
         addItem(unlockSetsItem);
         if(!HomeScreen.instance.getQuestCommanderMode())
             addItem(travelItem);
+        addItem(relicsItem); relicsItem.setSelected(currentScreen == relicsScreen);
         addItem(statsItem); statsItem.setSelected(currentScreen == statsScreen);
         addItem(prefsItem); prefsItem.setSelected(currentScreen == prefsScreen);
         addItem(testMenuItem);

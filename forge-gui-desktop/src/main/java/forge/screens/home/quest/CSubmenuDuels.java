@@ -254,6 +254,18 @@ public enum CSubmenuDuels implements ICDoc {
 				});
 				testMenu.add(itemAlchemyTable);
 
+				javax.swing.JMenuItem itemAddRelic = new javax.swing.JMenuItem("Add Relic");
+				itemAddRelic.addActionListener(ae -> {
+					forge.gamemodes.quest.QuestRelicType relic = forge.gui.util.SGuiChoose.oneOrNone(
+						"Choose a relic to add:", java.util.Arrays.asList(forge.gamemodes.quest.QuestRelicType.values()));
+					if (relic != null) {
+						FModel.getQuest().getAssets().addRelic(relic);
+						FModel.getQuest().save();
+						CSubmenuDuels.this.update();
+					}
+				});
+				testMenu.add(itemAddRelic);
+
 				testMenu.addSeparator();
 
 				javax.swing.JMenuItem itemResetShop = new javax.swing.JMenuItem("Reset Special Shop");

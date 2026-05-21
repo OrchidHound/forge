@@ -22,6 +22,7 @@ import forge.screens.home.quest.VSubmenuQuestDraft;
 import forge.screens.home.quest.VSubmenuQuestLoadData;
 import forge.screens.home.quest.VSubmenuQuestPrefs;
 import forge.screens.home.quest.VSubmenuQuestStart;
+import forge.screens.home.quest.VSubmenuRelics;
 import forge.screens.home.sanctioned.VSubmenuConstructed;
 import forge.screens.home.sanctioned.VSubmenuDraft;
 import forge.screens.home.sanctioned.VSubmenuSealed;
@@ -69,6 +70,7 @@ public enum EDocID {
     HOME_QUESTDUELS (VSubmenuDuels.SINGLETON_INSTANCE),
     HOME_QUESTDECKS (VSubmenuQuestDecks.SINGLETON_INSTANCE),
     HOME_QUESTPREFS (VSubmenuQuestPrefs.SINGLETON_INSTANCE),
+    HOME_QUESTRELICS (VSubmenuRelics.SINGLETON_INSTANCE),
     HOME_GAUNTLETBUILD (VSubmenuGauntletBuild.SINGLETON_INSTANCE),
     HOME_GAUNTLETLOAD (VSubmenuGauntletLoad.SINGLETON_INSTANCE),
     HOME_GAUNTLETQUICK (VSubmenuGauntletQuick.SINGLETON_INSTANCE),

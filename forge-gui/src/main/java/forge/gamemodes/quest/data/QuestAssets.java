@@ -18,8 +18,11 @@
 package forge.gamemodes.quest.data;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import forge.deck.Deck;
@@ -28,6 +31,7 @@ import forge.gamemodes.quest.QuestDeckGroupMap;
 import forge.gamemodes.quest.QuestDeckMap;
 import forge.gamemodes.quest.QuestMode;
 import forge.gamemodes.quest.QuestUtilCards;
+import forge.gamemodes.quest.QuestRelicType;
 import forge.gamemodes.quest.bazaar.QuestItemType;
 import forge.gamemodes.quest.data.QuestPreferences.QPref;
 import forge.item.InventoryItem;
@@ -63,10 +67,28 @@ public class QuestAssets {
     private final Map<QuestItemType, QuestItemCondition> inventoryItems = new EnumMap<>(
             QuestItemType.class);
 
+    /** Relics held by the player during this quest run. */
+    private List<QuestRelicType> relics = new ArrayList<>();
+
     // Much the same like other map, but keyed by string (to support a lot of custom pets)
     private final Map<String, QuestItemCondition> combatPets = new HashMap<>();
     
     private final HashMap<String, DeckGroup> draftDecks = new HashMap<>();
+    public final boolean hasRelic(final QuestRelicType relic) {
+        return relics != null && relics.contains(relic);
+    }
+
+    public final void addRelic(final QuestRelicType relic) {
+        if (relics == null) { relics = new ArrayList<>(); }
+        if (!relics.contains(relic)) {
+            relics.add(relic);
+        }
+    }
+
+    public final List<QuestRelicType> getRelics() {
+        return relics != null ? Collections.unmodifiableList(relics) : Collections.emptyList();
+    }
+
     /**
      * Checks for item.
      *

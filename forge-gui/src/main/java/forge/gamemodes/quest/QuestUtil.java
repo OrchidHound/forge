@@ -922,6 +922,37 @@ public class QuestUtil {
         return performAlchemyTableEvent();
     }
 
+    /**
+     * Performs the Alchemy Kit relic exchange: player selects up to 2 rare/mythic cards
+     * to trade for an equal number of random rare/mythic cards. Returns the new cards,
+     * or empty list if the player declined or had no eligible cards.
+     */
+    public static List<PaperCard> performAlchemyKitExchange() {
+        final ItemPool<PaperCard> pool = FModel.getQuest().getCards().getCardpool();
+        if (pool.isEmpty()) { return Collections.emptyList(); }
+
+        final List<PaperCard> rareMythics = new ArrayList<>();
+        for (final Map.Entry<PaperCard, Integer> e : pool) {
+            if (PaperCardPredicates.IS_RARE_OR_MYTHIC.test(e.getKey())) {
+                rareMythics.add(e.getKey());
+            }
+        }
+        if (rareMythics.isEmpty()) { return Collections.emptyList(); }
+
+        rareMythics.sort(Comparator.comparing(PaperCard::getName));
+
+        final List<PaperCard> offered = SGuiChoose.getChoices(
+            "Alchemy Kit: Select up to 2 rare/mythic cards to exchange (0 to skip):", 0, 2, rareMythics);
+        if (offered == null || offered.isEmpty()) { return Collections.emptyList(); }
+
+        for (final PaperCard card : offered) {
+            FModel.getQuest().getCards().removeCard(card, 1);
+        }
+        final List<PaperCard> reward = FModel.getQuest().getCards()
+                .addRandomCards(offered.size(), PaperCardPredicates.IS_RARE_OR_MYTHIC);
+        return reward != null ? reward : Collections.emptyList();
+    }
+
     public static void buyQuestItem(final IQuestBazaarItem item) {
         final QuestAssets qA = FModel.getQuest().getAssets();
         final int cost = item.getBuyingPrice(qA);
