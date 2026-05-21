@@ -243,6 +243,17 @@ public enum CSubmenuDuels implements ICDoc {
 				});
 				testMenu.add(itemHalfLifeGambit);
 
+				javax.swing.JMenuItem itemAlchemyTable = new javax.swing.JMenuItem("Trigger Alchemy Table");
+				itemAlchemyTable.addActionListener(ae -> {
+					java.util.List<forge.item.PaperCard> reward = forge.gamemodes.quest.QuestUtil.triggerAlchemyTableTest();
+					if (!reward.isEmpty()) {
+						FModel.getQuest().save();
+						forge.gui.util.SGuiChoose.reveal("The Alchemy Table has transformed your cards! You received:", reward);
+					}
+					CSubmenuDuels.this.update();
+				});
+				testMenu.add(itemAlchemyTable);
+
 				testMenu.addSeparator();
 
 				javax.swing.JMenuItem itemResetShop = new javax.swing.JMenuItem("Reset Special Shop");

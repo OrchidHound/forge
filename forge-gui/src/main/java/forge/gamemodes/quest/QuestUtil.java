@@ -876,6 +876,52 @@ public class QuestUtil {
         return chosen;
     }
 
+    /**
+     * Performs the alchemy table event: player selects up to 8 rare/mythic cards to exchange
+     * for an equal number of random rare/mythic cards. Returns the new cards, or empty list
+     * if the player declined or had no eligible cards.
+     */
+    public static List<PaperCard> performAlchemyTableEvent() {
+        final ItemPool<PaperCard> pool = FModel.getQuest().getCards().getCardpool();
+        if (pool.isEmpty()) { return Collections.emptyList(); }
+
+        final List<PaperCard> rareMythics = new ArrayList<>();
+        for (final Map.Entry<PaperCard, Integer> e : pool) {
+            if (PaperCardPredicates.IS_RARE_OR_MYTHIC.test(e.getKey())) {
+                rareMythics.add(e.getKey());
+            }
+        }
+        if (rareMythics.isEmpty()) { return Collections.emptyList(); }
+
+        rareMythics.sort(Comparator.comparing(PaperCard::getName));
+
+        final boolean accepted = SOptionPane.showConfirmDialog(
+            "The Alchemy Table glows with transformative energy!\n\n"
+                + "You may offer up to 8 rare or mythic cards from your collection "
+                + "in exchange for an equal number of random rare/mythic cards.\n\n"
+                + "Do you wish to approach the table?",
+            "Alchemy Table");
+        if (!accepted) { return Collections.emptyList(); }
+
+        final List<PaperCard> offered = SGuiChoose.getChoices(
+            "Select up to 8 rare/mythic cards to offer (0 to cancel):", 0, 8, rareMythics);
+        if (offered == null || offered.isEmpty()) { return Collections.emptyList(); }
+
+        for (final PaperCard card : offered) {
+            FModel.getQuest().getCards().removeCard(card, 1);
+        }
+        final List<PaperCard> reward = FModel.getQuest().getCards()
+                .addRandomCards(offered.size(), PaperCardPredicates.IS_RARE_OR_MYTHIC);
+        return reward != null ? reward : Collections.emptyList();
+    }
+
+    /**
+     * Test helper: directly triggers the alchemy table event.
+     */
+    public static List<PaperCard> triggerAlchemyTableTest() {
+        return performAlchemyTableEvent();
+    }
+
     public static void buyQuestItem(final IQuestBazaarItem item) {
         final QuestAssets qA = FModel.getQuest().getAssets();
         final int cost = item.getBuyingPrice(qA);

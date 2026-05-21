@@ -267,6 +267,8 @@ public enum VSubmenuQuestPrefs implements IVSubmenu<CSubmenuQuestPrefs> {
         pnlRewards.add(new PrefInput(QPref.CARD_EXCHANGE_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
         pnlRewards.add(new FLabel.Builder().text(localizer.getMessage("lblHalfLifeGambitChance")).fontAlign(SwingConstants.RIGHT).build(), labelConstraints);
         pnlRewards.add(new PrefInput(QPref.HALF_LIFE_GAMBIT_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
+        pnlRewards.add(new FLabel.Builder().text(localizer.getMessage("lblAlchemyTableChance")).fontAlign(SwingConstants.RIGHT).build(), labelConstraints);
+        pnlRewards.add(new PrefInput(QPref.ALCHEMY_TABLE_CHANCE, QuestPreferencesErrType.REWARDS), fieldConstraints);
     }
     private void populateDifficulty() {
         pnlDifficulty.setOpaque(false);

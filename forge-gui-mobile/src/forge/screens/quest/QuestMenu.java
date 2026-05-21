@@ -128,6 +128,16 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
             }));
+            addItem(new FMenuItem("Trigger Alchemy Table", FSkinImage.QUEST_BOTTLES, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    java.util.List<forge.item.PaperCard> reward = QuestUtil.triggerAlchemyTableTest();
+                    if (!reward.isEmpty()) {
+                        FModel.getQuest().save();
+                        forge.gui.util.SGuiChoose.reveal("The Alchemy Table has transformed your cards! You received:", reward);
+                    }
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                });
+            }));
             addItem(new FMenuItem("Reset Special Shop", FSkinImage.QUEST_BOOK, event -> {
                 QuestSpellShop.clearSpecialShop();
                 FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);

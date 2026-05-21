@@ -165,6 +165,11 @@ public class QuestWinLoseController {
                     awardCardExchange();
                 }
 
+                // Alchemy table event
+                if (MyRandom.getRandom().nextFloat() < getEventChance(QPref.ALCHEMY_TABLE_CHANCE)) {
+                    awardAlchemyTable();
+                }
+
                 // Half-life gambit reward
                 if (QuestUtil.isHalfLifeHandicapActive()) {
                     QuestUtil.setHalfLifeHandicapActive(false);
@@ -754,6 +759,13 @@ public class QuestWinLoseController {
         view.showCards("You sacrificed: " + removed.getName(), List.of(removed));
         if (!reward.isEmpty()) {
             view.showCards("In return, you received:", reward);
+        }
+    }
+
+    private void awardAlchemyTable() {
+        final List<PaperCard> reward = QuestUtil.performAlchemyTableEvent();
+        if (!reward.isEmpty()) {
+            view.showCards("The Alchemy Table has transformed your cards! You received:", reward);
         }
     }
 
