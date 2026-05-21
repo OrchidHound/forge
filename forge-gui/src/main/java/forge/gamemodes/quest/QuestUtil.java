@@ -682,8 +682,11 @@ public class QuestUtil {
 
         // Half-life gambit offer
         halfLifeHandicapActive = false;
-        final int halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE);
-        if (MyRandom.getRandom().nextFloat() < halfLifeGambitChance / 1000f) {
+        float halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE) / 1000f;
+        if (qData.getAssets().hasItem(QuestItemType.LUCKY_MOX)) {
+            halfLifeGambitChance *= 1.5f;
+        }
+        if (MyRandom.getRandom().nextFloat() < halfLifeGambitChance) {
             final int regularLife = humanStart.getStartingLife();
             final int halfLife = regularLife / 2;
             final boolean accepted = SOptionPane.showConfirmDialog(

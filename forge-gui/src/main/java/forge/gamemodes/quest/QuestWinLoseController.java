@@ -151,20 +151,17 @@ public class QuestWinLoseController {
                 awardWinStreakBonus();
 
                 // Card duplication event
-                final int duplicationChance = FModel.getQuestPreferences().getPrefInt(QPref.CARD_DUPLICATION_CHANCE);
-                if (MyRandom.getRandom().nextFloat() < duplicationChance / 1000f) {
+                if (MyRandom.getRandom().nextFloat() < getEventChance(QPref.CARD_DUPLICATION_CHANCE)) {
                     awardCardDuplication();
                 }
 
                 // Special rare shop event
-                final int specialShopChance = FModel.getQuestPreferences().getPrefInt(QPref.SPECIAL_SHOP_CHANCE);
-                if (MyRandom.getRandom().nextFloat() < specialShopChance / 1000f) {
+                if (MyRandom.getRandom().nextFloat() < getEventChance(QPref.SPECIAL_SHOP_CHANCE)) {
                     awardSpecialShop();
                 }
 
                 // Card exchange event
-                final int cardExchangeChance = FModel.getQuestPreferences().getPrefInt(QPref.CARD_EXCHANGE_CHANCE);
-                if (MyRandom.getRandom().nextFloat() < cardExchangeChance / 1000f) {
+                if (MyRandom.getRandom().nextFloat() < getEventChance(QPref.CARD_EXCHANGE_CHANCE)) {
                     awardCardExchange();
                 }
 
@@ -786,6 +783,14 @@ public class QuestWinLoseController {
      *
      * @return boolean
      */
+    private float getEventChance(QPref pref) {
+        float chance = FModel.getQuestPreferences().getPrefInt(pref) / 1000f;
+        if (qData.getAssets().hasItem(QuestItemType.LUCKY_MOX)) {
+            chance *= 1.5f;
+        }
+        return chance;
+    }
+
     private boolean getLuckyCoinResult() {
         final boolean hasCoin = qData.getAssets().getItemLevel(QuestItemType.LUCKY_COIN) >= 1;
 

@@ -18,6 +18,7 @@
         <string>Estates</string>
         <string>Lucky Coin</string>
         <string>Cash Stakes</string>
+        <string>Lucky Mox</string>
       </items> 	
     </stall>
     <stall name="Bookstore" displayName="Beleren&apos;s Books" icon="ICO_QUEST_BOOK">
@@ -112,9 +113,14 @@ Effect: You may have each match be best of 5 instead of 3.</description>
 Effect: Cards lost in an ante match will be available immediately following the match in the Card Shop.</description>
     </item>
     <item name="Bank Membership" maxLevel="3" basePrice="2500" itemType="MEMBERSHIP_TOKEN" icon="ICO_QUEST_BIG_BM">
-      <description>A token certifying you as a member of the bank, giving you a greater selection of booster packs when you win. 
+      <description>A token certifying you as a member of the bank, giving you a greater selection of booster packs when you win.
 
 Effect: Adds one more booster pack to the pack selection after you win.</description>
+    </item>
+    <item name="Lucky Mox" maxLevel="1" basePrice="6000" itemType="LUCKY_MOX" icon="ICO_QUEST_BIG_COIN">
+      <description>A legendary gemstone said to attract fortune and rare opportunity.
+
+Effect: Increases the chance of all triggered events (card duplication, special shop, card exchange, half-life gambit) by 50%.</description>
     </item>
   </questItems>
   <pets>

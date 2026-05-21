@@ -48,7 +48,9 @@ public enum QuestItemType {
 
     CASH_STAKES("Cash Stakes", QuestItemBasic.class, QuestItemCondition.class),
 
-    MEMBERSHIP_TOKEN("Bank Membership", QuestItemMembership.class, QuestItemCondition.class);
+    MEMBERSHIP_TOKEN("Bank Membership", QuestItemMembership.class, QuestItemCondition.class),
+
+    LUCKY_MOX("Lucky Mox", QuestItemBasic.class, QuestItemCondition.class);
 
     private final String saveFileKey;
     private final Class<? extends QuestItemBasic> bazaarControllerClass;
