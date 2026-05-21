@@ -68,6 +68,12 @@ public class QuestAchievements {
         drafts.remove(draft);
     }
 
+    public void rerollDraft(QuestEventDraft draft) {
+        deleteDraft(draft);
+        draftsToGenerate++;
+        generateDrafts();
+    }
+
     public void endCurrentTournament(final int place) {
         drafts.remove(drafts.get(currentDraft));
         currentDraft = -1;

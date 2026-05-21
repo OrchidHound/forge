@@ -45,6 +45,8 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
     private final FLabel lblCredits = pnlSelectTournament.add(new FLabel.Builder().icon(FSkinImage.QUEST_COINSTACK)
             .iconScaleFactor(0.75f).font(FSkinFont.get(16)).build());
 
+    private final FButton btnRerollDraft = pnlSelectTournament.add(new FButton(Forge.getLocalizer().getMessage("btnRerollDraft")));
+
     private final FLabel lblInfo = pnlSelectTournament.add(new FLabel.Builder().text(Forge.getLocalizer().getMessage("lblSelectaTournament") + ":")
             .align(Align.center).font(FSkinFont.get(16)).build());
 
@@ -80,6 +82,7 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
     public QuestTournamentsScreen() {
         super();
         controller = new QuestTournamentController(this);
+        btnRerollDraft.setCommand(event -> FThreads.invokeInBackgroundThread(controller::rerollDraft));
         btnEditDeck.setCommand(event -> editDeck(true));
         btnLeaveTournament.setCommand(event -> {
             //must run in background thread to handle alerts
@@ -152,6 +155,7 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
         if (mode == mode0) { return; }
         mode = mode0;
         pnlSelectTournament.setVisible(mode == Mode.SELECT_TOURNAMENT || mode == Mode.EMPTY);
+        btnRerollDraft.setVisible(mode0 == Mode.SELECT_TOURNAMENT);
         pnlPrepareDeck.setVisible(mode == Mode.PREPARE_DECK);
         pnlTournamentActive.setVisible(mode == Mode.TOURNAMENT_ACTIVE);
         btnEditDeckInTourn.setVisible(mode == Mode.TOURNAMENT_ACTIVE);
@@ -280,6 +284,11 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
         return btnLeaveTournament;
     }
 
+    @Override
+    public FButton getBtnRerollDraft() {
+        return btnRerollDraft;
+    }
+
     public FButton getBtnEditDeckInTourn() {
         return btnEditDeckInTourn;
     }
@@ -293,7 +302,10 @@ public class QuestTournamentsScreen extends QuestLaunchScreen implements IQuestT
             float gap = Utils.scale(2);
             float y = gap; //move credits label down a couple pixels so it looks better
 
-            lblCredits.setBounds(0, y, width, lblCredits.getAutoSizeBounds().height);
+            float rerollWidth = Utils.AVG_FINGER_WIDTH * 3;
+            float creditsWidth = width - rerollWidth - gap;
+            lblCredits.setBounds(0, y, creditsWidth, lblCredits.getAutoSizeBounds().height);
+            btnRerollDraft.setBounds(creditsWidth + gap, y, rerollWidth, lblCredits.getHeight());
             y += lblCredits.getHeight() + gap;
 
             float x = PADDING;

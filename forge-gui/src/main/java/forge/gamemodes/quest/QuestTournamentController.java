@@ -32,6 +32,8 @@ import forge.util.ThreadUtil;
 import forge.util.storage.IStorage;
 
 public class QuestTournamentController {
+    public static final int REROLL_COST = 600;
+
     private final IQuestTournamentView view;
     private final Localizer localizer = Localizer.getInstance();
     private boolean drafting = false;
@@ -206,7 +208,9 @@ public class QuestTournamentController {
     }
 
     private void updateSelectTournament() {
-        view.getLblCredits().setText(localizer.getMessage("lblCredits") + ": " + QuestUtil.formatCredits(FModel.getQuest().getAssets().getCredits()));
+        final long credits = FModel.getQuest().getAssets().getCredits();
+        view.getLblCredits().setText(localizer.getMessage("lblCredits") + ": " + QuestUtil.formatCredits(credits));
+        view.getBtnRerollDraft().setEnabled(credits >= REROLL_COST);
 
         final QuestAchievements achievements = FModel.getQuest().getAchievements();
         achievements.generateDrafts();
@@ -372,6 +376,34 @@ public class QuestTournamentController {
 
             final BoosterDraft draft = draftEvent.enter();
             FThreads.invokeInEdtLater(() -> view.startDraft(draft));
+        });
+    }
+
+    public void rerollDraft() {
+        ThreadUtil.invokeInGameThread(() -> {
+            final QuestEventDraft selectedDraft = QuestUtil.getDraftEvent();
+            if (selectedDraft == null) { return; }
+
+            final long credits = FModel.getQuest().getAssets().getCredits();
+            if (credits < REROLL_COST) {
+                SOptionPane.showMessageDialog(
+                    localizer.getMessage("lblYouNeed") + " " + QuestUtil.formatCredits(REROLL_COST - credits) + " " + localizer.getMessage("lblMoreCredits"),
+                    localizer.getMessage("lblNotEnoughCredits"), SOptionPane.WARNING_ICON);
+                return;
+            }
+
+            final boolean confirmed = SOptionPane.showConfirmDialog(
+                "Rerolling this tournament costs " + QuestUtil.formatCredits(REROLL_COST) + " credits. Proceed?",
+                "Reroll Tournament");
+            if (!confirmed) { return; }
+
+            FModel.getQuest().getAssets().subtractCredits(REROLL_COST);
+            FModel.getQuest().getAchievements().rerollDraft(selectedDraft);
+
+            FThreads.invokeInEdtLater(() -> {
+                update();
+                view.populate();
+            });
         });
     }
 

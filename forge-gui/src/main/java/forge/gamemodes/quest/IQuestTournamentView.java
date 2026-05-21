@@ -15,6 +15,7 @@ public interface IQuestTournamentView {
     void editDeck(boolean isNew);
 
     IButton getLblCredits();
+    IButton getBtnRerollDraft();
     IButton getLblFirst();
     IButton getLblSecond();
     IButton getLblThird();

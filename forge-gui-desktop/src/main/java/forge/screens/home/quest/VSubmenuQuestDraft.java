@@ -100,6 +100,8 @@ public enum VSubmenuQuestDraft implements IVSubmenu<CSubmenuQuestDraft>, IQuestT
     private final StartButton btnStartTournament  = new StartButton();
     private final StartButton btnStartMatch  = new StartButton();
 
+    private final FLabel btnRerollDraft = new FLabel.ButtonBuilder().text("Reroll (600 Credits)").fontSize(14).build();
+
     private final FLabel btnEditDeck = new FLabel.ButtonBuilder().text(localizer.getMessage("btnEditDeck")).fontSize(24).build();
     private final FLabel btnLeaveTournament = new FLabel.ButtonBuilder().text(localizer.getMessage("btnLeaveTournament")).fontSize(12).build();
     private final FLabel btnStartMatchSmall = new FLabel.ButtonBuilder().text(localizer.getMessage("btnStartMatchSmall")).fontSize(12).build();
@@ -195,6 +197,10 @@ public enum VSubmenuQuestDraft implements IVSubmenu<CSubmenuQuestDraft>, IQuestT
 
     public FLabel getBtnLeaveTournament() {
         return btnLeaveTournament;
+    }
+
+    public FLabel getBtnRerollDraft() {
+        return btnRerollDraft;
     }
 
     public PnlMatchup[] getLblsMatchups() {
@@ -303,7 +309,8 @@ public enum VSubmenuQuestDraft implements IVSubmenu<CSubmenuQuestDraft>, IQuestT
         VHomeUI.SINGLETON_INSTANCE.getPnlDisplay().add(lblInfo, "h 30px!, gap 0 0 5px, span 2");
         VHomeUI.SINGLETON_INSTANCE.getPnlDisplay().add(pnlTournaments, "w 88% - 200px!, pushy, growy");
         VHomeUI.SINGLETON_INSTANCE.getPnlDisplay().add(pnlStats, "w 185px!, pushy, growy, gap 4% 4% 0 0");
-        VHomeUI.SINGLETON_INSTANCE.getPnlDisplay().add(btnStartDraft, "gap 0 6% 30px 30px, ax center, span 2");
+        VHomeUI.SINGLETON_INSTANCE.getPnlDisplay().add(btnRerollDraft, "h 26px!, gap 6% 0 30px 30px, ax right");
+        VHomeUI.SINGLETON_INSTANCE.getPnlDisplay().add(btnStartDraft, "gap 0 6% 30px 30px, ax left");
     }
 
     private void populatePrepareDeck() {
