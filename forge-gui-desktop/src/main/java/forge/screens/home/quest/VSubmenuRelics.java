@@ -2,6 +2,9 @@ package forge.screens.home.quest;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.swing.JSeparator;
@@ -75,12 +78,14 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
                     .fontAlign(SwingConstants.LEFT)
                     .build(), "w 100%!, gap 0 0 5px 5px");
         } else {
-            for (int i = 0; i < relics.size(); i++) {
-                final QuestRelicType relic = relics.get(i);
-
-                if (i > 0) {
+            final List<QuestRelicType> uniqueRelics = new ArrayList<>(new LinkedHashSet<>(relics));
+            uniqueRelics.sort(Comparator.comparingInt(VSubmenuRelics::rarityOrder));
+            boolean first = true;
+            for (final QuestRelicType relic : uniqueRelics) {
+                if (!first) {
                     pnlRelics.add(new JSeparator(SwingConstants.HORIZONTAL), "w 100%!, h 1px!, gap 0 0 10px 10px");
                 }
+                first = false;
 
                 final FLabel nameLabel;
                 if ("Mythic".equals(relic.getRarity())) {
@@ -98,7 +103,14 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
                             .build();
                     nameLabel.setForeground(getRelicNameColor(relic));
                 }
-                pnlRelics.add(nameLabel, "w 100%!, gap 0 0 8px 4px");
+                pnlRelics.add(nameLabel, "w 100%!, gap 0 0 8px 2px");
+
+                final int count = FModel.getQuest().getAssets().getRelicCount(relic);
+                pnlRelics.add(new FLabel.Builder()
+                        .text("Quantity: " + count)
+                        .fontSize(12)
+                        .fontAlign(SwingConstants.CENTER)
+                        .build(), "w 100%!, gap 0 0 0 4px");
 
                 pnlRelics.add(new FLabel.Builder()
                         .text(relic.getDescription())
@@ -155,6 +167,15 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
     @Override
     public DragCell getParentCell() {
         return parentCell;
+    }
+
+    private static int rarityOrder(final QuestRelicType relic) {
+        switch (relic.getRarity()) {
+            case "Mythic":   return 0;
+            case "Rare":     return 1;
+            case "Uncommon": return 2;
+            default:         return 3;
+        }
     }
 
     private static Color getRelicNameColor(final QuestRelicType relic) {

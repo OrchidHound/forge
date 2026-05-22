@@ -85,6 +85,14 @@ public enum QuestRelicType {
     CRUSHING_BLOW("Crushing Blow",
             "After winning a duel by reducing your opponent to -20 or less life, "
             + "you receive 3 bonus rare/mythic cards per copy owned. Stacks with multiple copies.",
+            "Common", 20),
+
+    COMPACT_GRIMOIRE("Compact Grimoire",
+            "Reduces the minimum deck size by 1 per copy owned. Stacks with multiple copies.",
+            "Common", 35),
+
+    VITALITY_CHARM("Vitality Charm",
+            "Increases your starting life total by 2 per copy owned. Stacks with multiple copies.",
             "Common", 20);
 
     private final String displayName;

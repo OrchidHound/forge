@@ -253,7 +253,7 @@ public class QuestAssets {
             case Commander: base += 20;
         }
 
-        return (base + this.getItemLevel(QuestItemType.ELIXIR_OF_LIFE)) - this.getItemLevel(QuestItemType.POUND_FLESH);
+        return (base + this.getItemLevel(QuestItemType.ELIXIR_OF_LIFE) + this.getRelicCount(QuestRelicType.VITALITY_CHARM) * 2) - this.getItemLevel(QuestItemType.POUND_FLESH);
     }
 
     /**

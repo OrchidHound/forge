@@ -820,7 +820,14 @@ public class QuestUtil {
 
         //Check quest mode's generic deck construction rules: minimum cards in deck, sideboard etc
         String errorMessage = GameType.Quest.getDeckFormat().getDeckConformanceProblem(deck);
-        if(errorMessage != null) return errorMessage; //return immediately if the deck does not conform to quest requirements
+        if (errorMessage != null && errorMessage.startsWith("should have at least")) {
+            final int grimCount = FModel.getQuest().getAssets().getRelicCount(QuestRelicType.COMPACT_GRIMOIRE);
+            final int effectiveMin = 40 - grimCount;
+            if (deck != null && deck.getMain().countAll() >= effectiveMin) {
+                errorMessage = null;
+            }
+        }
+        if (errorMessage != null) return errorMessage;
 
         //Check for all applicable deck construction rules per this quests's saved DeckConstructionRules enum
         switch(FModel.getQuest().getDeckConstructionRules()){

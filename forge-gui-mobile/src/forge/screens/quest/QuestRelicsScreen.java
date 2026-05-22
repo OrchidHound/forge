@@ -1,5 +1,8 @@
 package forge.screens.quest;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Align;
@@ -62,10 +65,11 @@ public class QuestRelicsScreen extends FScreen {
                     .font(FSkinFont.get(14))
                     .build());
         } else {
-            for (int i = 0; i < relics.size(); i++) {
-                final QuestRelicType relic = relics.get(i);
-
-                if (i > 0) {
+            final List<QuestRelicType> uniqueRelics = new ArrayList<>(new LinkedHashSet<>(relics));
+            uniqueRelics.sort(Comparator.comparingInt(QuestRelicsScreen::rarityOrder));
+            boolean first = true;
+            for (final QuestRelicType relic : uniqueRelics) {
+                if (!first) {
                     final FDisplayObject separator = new FDisplayObject() {
                         @Override
                         public void draw(final Graphics g) {
@@ -75,12 +79,20 @@ public class QuestRelicsScreen extends FScreen {
                     separator.setHeight(Utils.scale(2));
                     scroller.add(separator);
                 }
+                first = false;
 
                 scroller.add(new FLabel.Builder()
                         .text(relic.getDisplayName())
                         .font(FSkinFont.get(18))
                         .align(Align.center)
                         .textColor(getRelicNameColor(relic))
+                        .build());
+
+                final int count = FModel.getQuest().getAssets().getRelicCount(relic);
+                scroller.add(new FLabel.Builder()
+                        .text("Quantity: " + count)
+                        .font(FSkinFont.get(12))
+                        .align(Align.center)
                         .build());
 
                 scroller.add(new FLabel.Builder()
@@ -115,6 +127,15 @@ public class QuestRelicsScreen extends FScreen {
     @Override
     protected void doLayout(float startY, float width, float height) {
         scroller.setBounds(0, startY, width, height - startY);
+    }
+
+    private static int rarityOrder(final QuestRelicType relic) {
+        switch (relic.getRarity()) {
+            case "Mythic":   return 0;
+            case "Rare":     return 1;
+            case "Uncommon": return 2;
+            default:         return 3;
+        }
     }
 
     private static FSkinColor getRelicNameColor(final QuestRelicType relic) {
