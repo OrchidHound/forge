@@ -83,9 +83,18 @@ public class QuestAssets {
 
     public final void addRelic(final QuestRelicType relic) {
         if (relics == null) { relics = new ArrayList<>(); }
-        if (!relics.contains(relic)) {
+        if (relic.allowMultiple() || !relics.contains(relic)) {
             relics.add(relic);
         }
+    }
+
+    public final int getRelicCount(final QuestRelicType relic) {
+        if (relics == null) { return 0; }
+        int count = 0;
+        for (final QuestRelicType r : relics) {
+            if (r == relic) { count++; }
+        }
+        return count;
     }
 
     public final List<QuestRelicType> getRelics() {

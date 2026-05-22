@@ -81,6 +81,12 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
                         .fontAlign(SwingConstants.LEFT)
                         .build(), "w 100%!, gap 0 0 10px 2px");
                 pnlRelics.add(new FLabel.Builder()
+                        .text(relic.getRarity())
+                        .fontStyle(Font.ITALIC)
+                        .fontSize(12)
+                        .fontAlign(SwingConstants.LEFT)
+                        .build(), "w 100%!, gap 10px 0 0 4px");
+                pnlRelics.add(new FLabel.Builder()
                         .text(relic.getDescription())
                         .fontSize(13)
                         .fontAlign(SwingConstants.LEFT)

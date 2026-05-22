@@ -176,6 +176,13 @@ public class QuestWinLoseController {
                 if (qData.getAssets().hasRelic(QuestRelicType.ALCHEMY_KIT)) {
                     awardAlchemyKitExchange();
                 }
+                final int rareGoodiesCount = qData.getAssets().getRelicCount(QuestRelicType.RARE_GOODIES);
+                if (rareGoodiesCount > 0) {
+                    final List<PaperCard> bonusCards = qData.getCards().addRandomCards(rareGoodiesCount, PaperCardPredicates.IS_RARE_OR_MYTHIC);
+                    if (!bonusCards.isEmpty()) {
+                        view.showCards("Rare Goodies: You received " + rareGoodiesCount + " bonus rare card" + (rareGoodiesCount > 1 ? "s" : "") + "!", bonusCards);
+                    }
+                }
 
                 // Half-life gambit reward
                 if (QuestUtil.isHalfLifeHandicapActive()) {
@@ -672,10 +679,11 @@ public class QuestWinLoseController {
     }
 
     private SealedTemplate getBoosterTemplate() {
+        final int bonusRares = qData.getAssets().getRelicCount(QuestRelicType.PREMIUM_PACKS);
         return new SealedTemplate(List.of(
                 Pair.of(BoosterSlots.COMMON, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_COMMONS)),
                 Pair.of(BoosterSlots.UNCOMMON, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_UNCOMMONS)),
-                Pair.of(BoosterSlots.RARE_MYTHIC, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_RARES))
+                Pair.of(BoosterSlots.RARE_MYTHIC, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_RARES) + bonusRares)
         ));
     }
 

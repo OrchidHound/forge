@@ -64,6 +64,10 @@ public class QuestRelicsScreen extends FScreen {
                         .font(FSkinFont.get(18))
                         .build());
                 scroller.add(new FLabel.Builder()
+                        .text(relic.getRarity())
+                        .font(FSkinFont.get(12))
+                        .build());
+                scroller.add(new FLabel.Builder()
                         .text(relic.getDescription())
                         .font(FSkinFont.get(13))
                         .build());
