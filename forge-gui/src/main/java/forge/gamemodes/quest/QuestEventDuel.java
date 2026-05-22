@@ -27,12 +27,17 @@ package forge.gamemodes.quest;
  */
 public class QuestEventDuel extends QuestEvent {
 
+    private boolean isFinalBossDeck = false;
+
     /**
      * Instantiates a new quest duel.
      */
     public QuestEventDuel() {
         super();
     }
+
+    public boolean isFinalBossDeck() { return isFinalBossDeck; }
+    public void setIsFinalBossDeck(boolean value) { isFinalBossDeck = value; }
 
     public QuestEventDuel getRandomOpponent(QuestEventDifficulty difficulty) {
         QuestEventDuel duel = new QuestEventDuel();

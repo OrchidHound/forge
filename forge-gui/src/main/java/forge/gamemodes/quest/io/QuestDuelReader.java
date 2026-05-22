@@ -37,6 +37,9 @@ public class QuestDuelReader extends StorageReaderFolder<QuestEventDuel> {
         if (sectionMeta.contains("Profile")) {
             qc.setProfile(sectionMeta.get("Profile"));
         }
+        if ("true".equalsIgnoreCase(sectionMeta.get("IsFinalBoss"))) {
+            qc.setIsFinalBossDeck(true);
+        }
 
         // Deck
         qc.setEventDeck(DeckSerializer.fromSections(contents));

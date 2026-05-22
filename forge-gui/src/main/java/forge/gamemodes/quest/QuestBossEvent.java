@@ -1,10 +1,13 @@
 package forge.gamemodes.quest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import forge.gamemodes.quest.data.QuestPreferences.DifficultyPrefs;
+import forge.gamemodes.quest.io.QuestDuelReader;
+import forge.localinstance.properties.ForgeConstants;
 import forge.model.FModel;
 import forge.util.MyRandom;
 
@@ -49,29 +52,50 @@ public class QuestBossEvent extends QuestEventDuel {
 
         QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber);
 
-        // Pick the strongest available opponent as the boss deck source
-        QuestEventDuel bossSource = null;
-        for (QuestEventDifficulty diff : new QuestEventDifficulty[]{
-                QuestEventDifficulty.EXPERT, QuestEventDifficulty.HARD,
-                QuestEventDifficulty.MEDIUM, QuestEventDifficulty.EASY}) {
-            List<QuestEventDuel> available = new ArrayList<>();
-            for (QuestEventDuel d : manager.getDuels(diff)) {
-                if (d.getEventDeck() != null && !d.getEventDeck().getMain().isEmpty()) {
-                    available.add(d);
+        // Build pool from the dedicated bosses folder
+        final List<QuestEventDuel> bossPool = new ArrayList<>();
+        final File bossDir = new File(ForgeConstants.DEFAULT_BOSS_DUELS_DIR);
+        if (bossDir.exists() && bossDir.isDirectory()) {
+            final QuestDuelReader reader = new QuestDuelReader(bossDir);
+            for (QuestEventDuel d : reader.readAll().values()) {
+                if (d.getEventDeck() == null || d.getEventDeck().getMain().isEmpty()) {
+                    continue;
                 }
-            }
-            if (!available.isEmpty()) {
-                bossSource = available.get(MyRandom.getRandom().nextInt(available.size()));
-                break;
+                if (isFinalBoss && !d.isFinalBossDeck()) {
+                    continue;
+                }
+                if (!isFinalBoss && d.isFinalBossDeck()) {
+                    continue;
+                }
+                bossPool.add(d);
             }
         }
 
-        // Fallback: use any duel from getAllDuels
-        if (bossSource == null) {
-            for (QuestEventDuel d : manager.getAllDuels()) {
-                if (d.getEventDeck() != null && !d.getEventDeck().getMain().isEmpty()) {
-                    bossSource = d;
+        QuestEventDuel bossSource = null;
+        if (!bossPool.isEmpty()) {
+            bossSource = bossPool.get(MyRandom.getRandom().nextInt(bossPool.size()));
+        } else {
+            // Fallback: pick from the strongest tier of regular duels
+            for (QuestEventDifficulty diff : new QuestEventDifficulty[]{
+                    QuestEventDifficulty.EXPERT, QuestEventDifficulty.HARD,
+                    QuestEventDifficulty.MEDIUM, QuestEventDifficulty.EASY}) {
+                List<QuestEventDuel> available = new ArrayList<>();
+                for (QuestEventDuel d : manager.getDuels(diff)) {
+                    if (d.getEventDeck() != null && !d.getEventDeck().getMain().isEmpty()) {
+                        available.add(d);
+                    }
+                }
+                if (!available.isEmpty()) {
+                    bossSource = available.get(MyRandom.getRandom().nextInt(available.size()));
                     break;
+                }
+            }
+            if (bossSource == null) {
+                for (QuestEventDuel d : manager.getAllDuels()) {
+                    if (d.getEventDeck() != null && !d.getEventDeck().getMain().isEmpty()) {
+                        bossSource = d;
+                        break;
+                    }
                 }
             }
         }
@@ -80,7 +104,7 @@ public class QuestBossEvent extends QuestEventDuel {
             bossEvent.setEventDeck(bossSource.getEventDeck());
             bossEvent.setProfile(bossSource.getProfile());
             bossEvent.setIconImageKey(bossSource.getIconImageKey());
-            String opponentName = bossSource.getOpponentName() != null
+            final String opponentName = bossSource.getOpponentName() != null
                     ? bossSource.getOpponentName() : bossSource.getTitle();
             bossEvent.setOpponentName(opponentName);
         }

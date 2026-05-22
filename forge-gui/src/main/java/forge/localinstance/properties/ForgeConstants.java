@@ -110,6 +110,7 @@ public final class ForgeConstants {
     public static final String BAZAAR_DIR                   = QUEST_DIR + "bazaar" + PATH_SEPARATOR;
     public static final String BAZAAR_INDEX_FILE            = BAZAAR_DIR + "index.xml";
     public static final String DEFAULT_DUELS_DIR            = QUEST_DIR + "duels";
+    public static final String DEFAULT_BOSS_DUELS_DIR       = QUEST_DIR + "bosses";
     public static final String DEFAULT_CHALLENGES_DIR       = QUEST_DIR + "challenges";
     public static final String THEMES_DIR                   = QUEST_DIR + "themes";
 
