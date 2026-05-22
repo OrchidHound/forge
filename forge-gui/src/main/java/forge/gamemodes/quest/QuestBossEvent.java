@@ -25,12 +25,12 @@ public class QuestBossEvent extends QuestEventDuel {
         if (finalBoss) {
             setTitle("The Final Boss");
             setDescription("The ultimate challenge! Defeat the Final Boss to complete your quest run!\n"
-                    + "Starting life: " + (20 + (bossNumber - 1) * 5)
+                    + "Starting life: 20"
                     + "  |  Starting hand: " + (7 + (bossNumber - 1) / 2));
         } else {
             setTitle("Boss " + bossNumber + " of 6");
             setDescription("A powerful Boss stands in your way! Defeat the Boss to continue your quest.\n"
-                    + "Starting life: " + (20 + (bossNumber - 1) * 5)
+                    + "Starting life: 20"
                     + "  |  Starting hand: " + (7 + (bossNumber - 1) / 2));
         }
     }
