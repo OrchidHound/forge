@@ -24,7 +24,16 @@ public enum QuestRelicType {
     PREMIUM_PACKS("Premium Packs",
             "Each booster pack reward contains one additional rare or mythic rare card. "
             + "Stacks with multiple copies.",
-            "Common", true);
+            "Common", true),
+
+    VICTORS_LAUREL("Victor's Laurel",
+            "Increases the bonus credits earned for winning by a specific turn by 50%. "
+            + "Stacks with multiple copies.",
+            "Uncommon", true),
+
+    HUGE_MITTS("Huge Mitts",
+            "Grants a starting hand size bonus of 1. Stacks with multiple copies.",
+            "Rare", true);
 
     private final String displayName;
     private final String description;

@@ -679,6 +679,12 @@ public class QuestUtil {
                 humanStart.setStartingLife(qData.getAssets().getLife(qData.getMode()) + extraLifeHuman);
             }
 
+            // Huge Mitts relic: bonus starting hand size
+            final int hugeMittsCount = qData.getAssets().getRelicCount(QuestRelicType.HUGE_MITTS);
+            if (hugeMittsCount > 0) {
+                humanStart.setStartingHand(humanStart.getStartingHand() + hugeMittsCount);
+            }
+
             // Half-life gambit offer
             halfLifeHandicapActive = false;
             float halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE) / 1000f;

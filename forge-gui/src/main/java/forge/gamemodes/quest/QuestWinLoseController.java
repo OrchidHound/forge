@@ -379,7 +379,7 @@ public class QuestWinLoseController {
 
             // Early turn bonus
             final int winTurn = game.getLastTurnNumber();
-            final int turnCredits = getCreditsRewardForWinByTurn(winTurn);
+            int turnCredits = getCreditsRewardForWinByTurn(winTurn);
 
             if (winTurn == 0) {
                 sb.append("Won on turn zero!");
@@ -398,6 +398,10 @@ public class QuestWinLoseController {
             }
 
             if (turnCredits > 0) {
+                final int laurelCount = qData.getAssets().getRelicCount(QuestRelicType.VICTORS_LAUREL);
+                if (laurelCount > 0) {
+                    turnCredits = (int) (turnCredits * (1 + 0.5 * laurelCount));
+                }
                 credGameplay += turnCredits;
                 sb.append(TextUtil.concatNoSpace(" Bonus: ", String.valueOf(turnCredits), " credits.\n"));
             }
