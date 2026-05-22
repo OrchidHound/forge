@@ -184,6 +184,12 @@ public class QuestWinLoseController {
                     }
                 }
 
+                // Wandering Invitation relic
+                final int invitationCount = qData.getAssets().getRelicCount(QuestRelicType.WANDERING_INVITATION);
+                if (invitationCount > 0 && qData.getAchievements().tryAwardBonusDraft(invitationCount)) {
+                    view.showMessage("A new tournament has appeared!", "Wandering Invitation", FSkinProp.ICO_QUEST_BOOK);
+                }
+
                 // Half-life gambit reward
                 if (QuestUtil.isHalfLifeHandicapActive()) {
                     QuestUtil.setHalfLifeHandicapActive(false);

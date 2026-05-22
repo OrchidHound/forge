@@ -2,7 +2,11 @@ package forge.screens.quest;
 
 import java.util.List;
 
+import com.badlogic.gdx.utils.Align;
+
 import forge.Forge;
+import forge.Graphics;
+import forge.assets.FSkinColor;
 import forge.assets.FSkinFont;
 import forge.gamemodes.quest.QuestRelicType;
 import forge.model.FModel;
@@ -58,15 +62,27 @@ public class QuestRelicsScreen extends FScreen {
                     .font(FSkinFont.get(14))
                     .build());
         } else {
-            for (final QuestRelicType relic : relics) {
+            for (int i = 0; i < relics.size(); i++) {
+                final QuestRelicType relic = relics.get(i);
+
+                if (i > 0) {
+                    final FDisplayObject separator = new FDisplayObject() {
+                        @Override
+                        public void draw(final Graphics g) {
+                            g.fillRect(FSkinColor.getStandardColor(100, 100, 100), 0, 0, getWidth(), getHeight());
+                        }
+                    };
+                    separator.setHeight(Utils.scale(2));
+                    scroller.add(separator);
+                }
+
                 scroller.add(new FLabel.Builder()
                         .text(relic.getDisplayName())
                         .font(FSkinFont.get(18))
+                        .align(Align.center)
+                        .textColor(getRelicNameColor(relic))
                         .build());
-                scroller.add(new FLabel.Builder()
-                        .text(relic.getRarity())
-                        .font(FSkinFont.get(12))
-                        .build());
+
                 scroller.add(new FLabel.Builder()
                         .text(relic.getDescription())
                         .font(FSkinFont.get(13))
@@ -99,5 +115,14 @@ public class QuestRelicsScreen extends FScreen {
     @Override
     protected void doLayout(float startY, float width, float height) {
         scroller.setBounds(0, startY, width, height - startY);
+    }
+
+    private static FSkinColor getRelicNameColor(final QuestRelicType relic) {
+        switch (relic.getRarity()) {
+            case "Common":   return FSkinColor.getStandardColor(255, 255, 255);
+            case "Uncommon": return FSkinColor.getStandardColor(100, 160, 255);
+            case "Rare":     return FSkinColor.getStandardColor(255, 215, 0);
+            default:         return FSkinColor.getStandardColor(255, 100, 0); // Mythic: orange
+        }
     }
 }

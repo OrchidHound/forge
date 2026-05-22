@@ -1,8 +1,10 @@
 package forge.screens.home.quest;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.List;
 
+import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
@@ -73,19 +75,31 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
                     .fontAlign(SwingConstants.LEFT)
                     .build(), "w 100%!, gap 0 0 5px 5px");
         } else {
-            for (final QuestRelicType relic : relics) {
-                pnlRelics.add(new FLabel.Builder()
-                        .text(relic.getDisplayName())
-                        .fontStyle(Font.BOLD)
-                        .fontSize(16)
-                        .fontAlign(SwingConstants.LEFT)
-                        .build(), "w 100%!, gap 0 0 10px 2px");
-                pnlRelics.add(new FLabel.Builder()
-                        .text(relic.getRarity())
-                        .fontStyle(Font.ITALIC)
-                        .fontSize(12)
-                        .fontAlign(SwingConstants.LEFT)
-                        .build(), "w 100%!, gap 10px 0 0 4px");
+            for (int i = 0; i < relics.size(); i++) {
+                final QuestRelicType relic = relics.get(i);
+
+                if (i > 0) {
+                    pnlRelics.add(new JSeparator(SwingConstants.HORIZONTAL), "w 100%!, h 1px!, gap 0 0 10px 10px");
+                }
+
+                final FLabel nameLabel;
+                if ("Mythic".equals(relic.getRarity())) {
+                    nameLabel = new FLabel.Builder()
+                            .text(buildRainbowHtml(relic.getDisplayName()))
+                            .fontSize(16)
+                            .fontAlign(SwingConstants.CENTER)
+                            .build();
+                } else {
+                    nameLabel = new FLabel.Builder()
+                            .text(relic.getDisplayName())
+                            .fontStyle(Font.BOLD)
+                            .fontSize(16)
+                            .fontAlign(SwingConstants.CENTER)
+                            .build();
+                    nameLabel.setForeground(getRelicNameColor(relic));
+                }
+                pnlRelics.add(nameLabel, "w 100%!, gap 0 0 8px 4px");
+
                 pnlRelics.add(new FLabel.Builder()
                         .text(relic.getDescription())
                         .fontSize(13)
@@ -141,5 +155,29 @@ public enum VSubmenuRelics implements IVSubmenu<CSubmenuRelics> {
     @Override
     public DragCell getParentCell() {
         return parentCell;
+    }
+
+    private static Color getRelicNameColor(final QuestRelicType relic) {
+        switch (relic.getRarity()) {
+            case "Common":   return Color.WHITE;
+            case "Uncommon": return new Color(100, 160, 255);
+            case "Rare":     return new Color(255, 215, 0);
+            default:         return Color.WHITE;
+        }
+    }
+
+    private static String buildRainbowHtml(final String name) {
+        final String[] colors = {"#FF0000", "#FF7F00", "#FFFF00", "#00CC00", "#4488FF", "#9900CC"};
+        final StringBuilder html = new StringBuilder("<html><center><b>");
+        int ci = 0;
+        for (final char c : name.toCharArray()) {
+            if (c == ' ') {
+                html.append("&nbsp;");
+            } else {
+                html.append("<font color='").append(colors[ci % colors.length]).append("'>").append(c).append("</font>");
+                ci++;
+            }
+        }
+        return html.append("</b></center></html>").toString();
     }
 }

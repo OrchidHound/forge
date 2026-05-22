@@ -48,7 +48,21 @@ public enum QuestRelicType {
     BARGAIN_BARREL("Bargain Barrel",
             "The spell shop stocks 12 additional common cards. "
             + "Stacks with multiple copies.",
-            "Common", true);
+            "Common", true),
+
+    DRAFT_PERMIT("Draft Permit",
+            "Reduces the cost of re-rolling a tournament from 600 to 250 credits.",
+            "Uncommon", false),
+
+    WANDERING_INVITATION("Wandering Invitation",
+            "After each won duel, each copy grants a 5% chance of one additional random tournament "
+            + "appearing. Stacks with multiple copies.",
+            "Uncommon", true),
+
+    DRAFTERS_EYE("Drafter's Eye",
+            "When you go undefeated in a tournament, you may pick one additional card from the "
+            + "drafted set per copy owned. Stacks with multiple copies.",
+            "Rare", true);
 
     private final String displayName;
     private final String description;

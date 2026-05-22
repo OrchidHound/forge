@@ -7,9 +7,11 @@ import java.util.Set;
 
 import forge.gamemodes.quest.QuestEventDraft;
 import forge.gamemodes.quest.QuestEventDraft.QuestDraftFormat;
+import forge.gamemodes.quest.QuestRelicType;
 import forge.gamemodes.quest.data.QuestPreferences.DifficultyPrefs;
 import forge.gamemodes.quest.data.QuestPreferences.QPref;
 import forge.model.FModel;
+import forge.util.MyRandom;
 
 /**
  * TODO: Write javadoc for this type.
@@ -319,6 +321,18 @@ public class QuestAchievements {
         }
 
         FModel.getQuest().save();
+    }
+
+    public boolean tryAwardBonusDraft(final int relicCount) {
+        if (drafts == null || relicCount <= 0) { return false; }
+        if (MyRandom.getRandom().nextFloat() < relicCount * 0.05f) {
+            final QuestEventDraft bonusDraft = QuestEventDraft.getRandomDraftOrNull(FModel.getQuest());
+            if (bonusDraft != null) {
+                drafts.add(bonusDraft);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addDraftToken() {

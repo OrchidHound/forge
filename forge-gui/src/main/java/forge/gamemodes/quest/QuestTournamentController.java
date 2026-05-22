@@ -33,6 +33,12 @@ import forge.util.storage.IStorage;
 
 public class QuestTournamentController {
     public static final int REROLL_COST = 600;
+    public static final int REROLL_COST_DISCOUNTED = 250;
+
+    public static int getEffectiveRerollCost() {
+        return FModel.getQuest().getAssets().hasRelic(QuestRelicType.DRAFT_PERMIT)
+                ? REROLL_COST_DISCOUNTED : REROLL_COST;
+    }
 
     private final IQuestTournamentView view;
     private final Localizer localizer = Localizer.getInstance();
@@ -144,8 +150,20 @@ public class QuestTournamentController {
 
                 final PaperCard card = GuiBase.getInterface().chooseCard(localizer.getMessage("lblSelectACard"), localizer.getMessage("lblSelectKeepCard"), prizes.selectRareCards);
                 prizes.addSelectedCard(card);
+                prizes.selectRareCards.remove(card);
 
                 SOptionPane.showMessageDialog("'" + card.getDisplayName() + "' " + localizer.getMessage("lblAddToCollection"), localizer.getMessage("lblCardAdded"), FSkinProp.ICO_QUEST_STAKES);
+
+                final int draftersEyeCount = FModel.getQuest().getAssets().getRelicCount(QuestRelicType.DRAFTERS_EYE);
+                if (draft.getPlayerPlacement() == 1 && draftersEyeCount > 0 && !prizes.selectRareCards.isEmpty()) {
+                    for (int i = 0; i < draftersEyeCount && !prizes.selectRareCards.isEmpty(); i++) {
+                        SOptionPane.showMessageDialog("Drafter's Eye: Pick an additional card from the drafted set!", "Drafter's Eye", FSkinProp.ICO_QUEST_STAKES);
+                        final PaperCard bonusCard = GuiBase.getInterface().chooseCard(localizer.getMessage("lblSelectACard"), localizer.getMessage("lblSelectKeepCard"), prizes.selectRareCards);
+                        prizes.addSelectedCard(bonusCard);
+                        prizes.selectRareCards.remove(bonusCard);
+                        SOptionPane.showMessageDialog("'" + bonusCard.getDisplayName() + "' " + localizer.getMessage("lblAddToCollection"), localizer.getMessage("lblCardAdded"), FSkinProp.ICO_QUEST_STAKES);
+                    }
+                }
             }
 
         }
@@ -210,7 +228,7 @@ public class QuestTournamentController {
     private void updateSelectTournament() {
         final long credits = FModel.getQuest().getAssets().getCredits();
         view.getLblCredits().setText(localizer.getMessage("lblCredits") + ": " + QuestUtil.formatCredits(credits));
-        view.getBtnRerollDraft().setEnabled(credits >= REROLL_COST);
+        view.getBtnRerollDraft().setEnabled(credits >= getEffectiveRerollCost());
 
         final QuestAchievements achievements = FModel.getQuest().getAchievements();
         achievements.generateDrafts();
@@ -385,19 +403,20 @@ public class QuestTournamentController {
             if (selectedDraft == null) { return; }
 
             final long credits = FModel.getQuest().getAssets().getCredits();
-            if (credits < REROLL_COST) {
+            final int rerollCost = getEffectiveRerollCost();
+            if (credits < rerollCost) {
                 SOptionPane.showMessageDialog(
-                    localizer.getMessage("lblYouNeed") + " " + QuestUtil.formatCredits(REROLL_COST - credits) + " " + localizer.getMessage("lblMoreCredits"),
+                    localizer.getMessage("lblYouNeed") + " " + QuestUtil.formatCredits(rerollCost - credits) + " " + localizer.getMessage("lblMoreCredits"),
                     localizer.getMessage("lblNotEnoughCredits"), SOptionPane.WARNING_ICON);
                 return;
             }
 
             final boolean confirmed = SOptionPane.showConfirmDialog(
-                "Rerolling this tournament costs " + QuestUtil.formatCredits(REROLL_COST) + " credits. Proceed?",
+                "Rerolling this tournament costs " + QuestUtil.formatCredits(rerollCost) + " credits. Proceed?",
                 "Reroll Tournament");
             if (!confirmed) { return; }
 
-            FModel.getQuest().getAssets().subtractCredits(REROLL_COST);
+            FModel.getQuest().getAssets().subtractCredits(rerollCost);
             FModel.getQuest().getAchievements().rerollDraft(selectedDraft);
 
             FThreads.invokeInEdtLater(() -> {
