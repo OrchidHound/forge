@@ -33,7 +33,22 @@ public enum QuestRelicType {
 
     HUGE_MITTS("Huge Mitts",
             "Grants a starting hand size bonus of 1. Stacks with multiple copies.",
-            "Rare", true);
+            "Rare", true),
+
+    COLLECTORS_LENS("Collector's Lens",
+            "The spell shop stocks 2 additional rare or mythic rare cards. "
+            + "Stacks with multiple copies.",
+            "Uncommon", true),
+
+    MERCHANTS_FAVOR("Merchant's Favor",
+            "The spell shop stocks 6 additional uncommon cards. "
+            + "Stacks with multiple copies.",
+            "Common", true),
+
+    BARGAIN_BARREL("Bargain Barrel",
+            "The spell shop stocks 12 additional common cards. "
+            + "Stacks with multiple copies.",
+            "Common", true);
 
     private final String displayName;
     private final String description;

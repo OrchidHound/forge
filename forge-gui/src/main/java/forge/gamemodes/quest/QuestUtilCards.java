@@ -677,9 +677,12 @@ public final class QuestUtilCards {
      * Generate cards in shop.
      */
     private void generateCardsInShop() {
-        final int numCommons   = questPreferences.getPrefInt(QPref.SHOP_SINGLES_COMMON);
-        final int numUncommons = questPreferences.getPrefInt(QPref.SHOP_SINGLES_UNCOMMON);
-        final int numRares     = questPreferences.getPrefInt(QPref.SHOP_SINGLES_RARE);
+        final int numCommons   = questPreferences.getPrefInt(QPref.SHOP_SINGLES_COMMON)
+                + questAssets.getRelicCount(QuestRelicType.BARGAIN_BARREL) * 12;
+        final int numUncommons = questPreferences.getPrefInt(QPref.SHOP_SINGLES_UNCOMMON)
+                + questAssets.getRelicCount(QuestRelicType.MERCHANTS_FAVOR) * 6;
+        final int numRares     = questPreferences.getPrefInt(QPref.SHOP_SINGLES_RARE)
+                + questAssets.getRelicCount(QuestRelicType.COLLECTORS_LENS) * 2;
 
         getQuestCardPool().filter(PaperCardPredicates.IS_COMMON)
                 .collect(StreamUtil.random(numCommons))
