@@ -677,21 +677,22 @@ public final class QuestUtilCards {
      * Generate cards in shop.
      */
     private void generateCardsInShop() {
-        final int startPacks = questPreferences.getPrefInt(QPref.SHOP_STARTING_PACKS);
-        final int winsForPack = questPreferences.getPrefInt(QPref.SHOP_WINS_FOR_ADDITIONAL_PACK);
-        final int maxPacks = questPreferences.getPrefInt(QPref.SHOP_MAX_PACKS);
-        final int minPacks = questPreferences.getPrefInt(QPref.SHOP_MIN_PACKS);
+        final int numCommons   = questPreferences.getPrefInt(QPref.SHOP_SINGLES_COMMON);
+        final int numUncommons = questPreferences.getPrefInt(QPref.SHOP_SINGLES_UNCOMMON);
+        final int numRares     = questPreferences.getPrefInt(QPref.SHOP_SINGLES_RARE);
 
-        int level = questController.getAchievements().getLevel();
-        final int levelPacks = level > 0 ? startPacks / level : startPacks;
-        final int winPacks = questController.getAchievements().getWin() / winsForPack;
-        final int totalPacks = Math.min(Math.max(levelPacks + winPacks, minPacks), maxPacks);
-
-        generateSinglesInShop(totalPacks);
+        getQuestCardPool().filter(PaperCardPredicates.IS_COMMON)
+                .collect(StreamUtil.random(numCommons))
+                .forEach(c -> questAssets.getShopList().add(c));
+        getQuestCardPool().filter(PaperCardPredicates.IS_UNCOMMON)
+                .collect(StreamUtil.random(numUncommons))
+                .forEach(c -> questAssets.getShopList().add(c));
+        getQuestCardPool().filter(PaperCardPredicates.IS_RARE_OR_MYTHIC)
+                .collect(StreamUtil.random(numRares))
+                .forEach(c -> questAssets.getShopList().add(c));
 
         if (questController.getFormat() == null || questController.getFormat().hasSnowLands()) {
-	        // Spell shop no longer sells basic lands (we use "Add Basic Lands" instead)
-	        questAssets.getShopList().addAllOfType(generateBasicLands(0, 5, questController.getFormat()));
+            questAssets.getShopList().addAllOfType(generateBasicLands(0, 5, questController.getFormat()));
         }
     }
 
