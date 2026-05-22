@@ -1,0 +1,32 @@
+[duel]
+[metadata]
+Name=Atraxa Sneak 1
+Title=Atraxa
+Difficulty=very hard
+Description=Sneak and show legacy meta deck as of 5/22/2026
+Icon=Atraxa.jpg
+Deck Type=constructed
+[Main]
+1 Thundering Falls
+4 Sneak Attack
+4 Force of Will
+1 City of Traitors
+2 Misty Rainforest
+4 Scalding Tarn
+4 Lotus Petal
+4 Ponder
+2 Flusterstorm
+1 Mountain
+2 Island
+3 Atraxa, Grand Unifier
+4 Ancient Tomb
+1 Polluted Delta
+4 Brainstorm
+4 Stock Up
+2 Omniscience
+4 Show and Tell
+2 Hexing Squelcher
+3 Volcanic Island
+3 Emrakul, the Aeons Torn
+1 Archon of Cruelty
+[Sideboard]

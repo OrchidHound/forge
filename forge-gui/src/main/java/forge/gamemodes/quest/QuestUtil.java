@@ -669,9 +669,21 @@ public class QuestUtil {
                 forceAnte = qc.isForceAnte();
             }
 
+            if (event instanceof QuestBossEvent) {
+                final int bossNumber = ((QuestBossEvent) event).getBossNumber();
+                lifeAI += (bossNumber - 1) * 5;
+            }
+
             final RegisteredPlayer humanStart = getRegisteredPlayerByVariant(getDeckForNewGame());
 
             final RegisteredPlayer aiStart = getRegisteredPlayerByVariant(event.getEventDeck());
+
+            if (event instanceof QuestBossEvent) {
+                final int handBonus = (((QuestBossEvent) event).getBossNumber() - 1) / 2;
+                if (handBonus > 0) {
+                    aiStart.setStartingHand(aiStart.getStartingHand() + handBonus);
+                }
+            }
 
             if (lifeHuman != null) {
                 humanStart.setStartingLife(lifeHuman);

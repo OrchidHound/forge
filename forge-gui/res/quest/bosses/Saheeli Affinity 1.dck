@@ -1,0 +1,35 @@
+[duel]
+[metadata]
+Name=Saheeli Affinity 1
+Title=Saheeli
+Difficulty=hard
+Description=Modern meta affinity deck as of 5/22/2026
+Icon=Saheeli Rai.jpg
+Deck Type=constructed
+[Main]
+4 Mishra's Bauble
+1 Steam Vents
+4 Kappa Cannoneer
+3 Mox Opal
+1 Skateboard
+3 Metallic Rebuke
+4 Pinnacle Emissary
+3 Engineered Explosives
+4 Weapons Manufacturing
+3 Sink into Stupor
+2 Thoughtcast
+1 Shadowspear
+1 Pithing Needle
+3 Emry, Lurker of the Loch
+3 Urza's Saga
+1 Island
+4 Tormod's Crypt
+4 Spirebluff Canal
+1 Mox Opal
+1 Urza's Saga
+1 Claws of Gix
+1 Welding Jar
+4 Fiery Islet
+1 Engineered Explosives
+2 Arcbound Ravager
+[Sideboard]

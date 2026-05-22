@@ -1,0 +1,30 @@
+[duel]
+[metadata]
+Name=Ajani Energy 1
+Title=Ajani
+Difficulty=very hard
+Description=Boros energy deck
+Icon=Ajani Goldmane2.jpg
+Deck Type=constructed
+[Main]
+4 Ragavan, Nimble Pilferer
+4 Fable of the Mirror-Breaker
+4 Guide of Souls
+4 Phelia, Exuberant Shepherd
+4 Amped Raptor
+3 Phlage, Titan of Fire's Fury
+3 Ajani, Nacatl Pariah
+2 Unstable Amulet
+4 Lightning Bolt
+4 Galvanic Discharge
+2 Static Prison
+3 Plains
+1 Mountain
+4 Aether Hub
+4 Sacred Foundry
+4 Arid Mesa
+3 Marsh Flats
+1 Eiganjo, Seat of the Empire
+1 Elegant Parlor
+1 Arena of Glory
+[Sideboard]

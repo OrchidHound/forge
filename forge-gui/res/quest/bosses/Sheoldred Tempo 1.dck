@@ -1,0 +1,35 @@
+[duel]
+[metadata]
+Name=Sheoldred Tempo 1
+Title=Sheoldred
+Difficulty=very hard
+Description=Legacy meta dimir temp deck as of 5/22/2026
+Icon=Sheoldred.jpg
+Deck Type=constructed
+[Main]
+4 Murktide Regent
+4 Orcish Bowmasters
+2 Brazen Borrower
+2 Dauthi Voidwalker
+4 Daze
+2 Sheoldred's Edict
+4 Brainstorm
+2 Cling to Dust
+3 Stifle
+1 Fatal Push
+4 Force of Will
+2 Snuff Out
+2 Sinkhole
+4 Ponder
+1 Lórien Revealed
+4 Polluted Delta
+1 Flooded Strand
+1 Misty Rainforest
+1 Swamp
+4 Wasteland
+1 Scalding Tarn
+1 Mystic Sanctuary
+1 Island
+3 Underground Sea
+2 Undercity Sewers
+[Sideboard]

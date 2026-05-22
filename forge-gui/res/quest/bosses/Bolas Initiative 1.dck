@@ -1,0 +1,38 @@
+[duel]
+[metadata]
+Name=Bolas Initiative 1
+Title=Nicol Bolas
+Difficulty=very hard
+Description=Vintage initiative deck
+Icon=Nicol Bolas Planeswalker.jpg
+Deck Type=constructed
+IsFinalBoss=true
+[Main]
+1 Cavern of Souls
+4 Anointed Peacekeeper
+4 Archon of Emeria
+1 Black Lotus
+4 Chrome Mox
+4 Clarion Conqueror
+2 Swords to Plowshares
+1 Karakas
+1 Karn, the Great Creator
+1 Mana Crypt
+1 Mox Emerald
+1 Mox Jet
+1 Mox Pearl
+1 Mox Ruby
+1 Thorn of Amethyst
+1 Plains
+4 Seasoned Dungeoneer
+1 Strip Mine
+1 Trinisphere
+1 Vexing Bauble
+4 Void Mirror
+4 Wasteland
+4 White Plume Adventurer
+4 Witch Enchanter
+1 Plains
+4 Ancient Tomb
+3 Cavern of Souls
+[Sideboard]
