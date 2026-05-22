@@ -140,6 +140,13 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                 });
             }));
+            addItem(new FMenuItem("Trigger Relic Offer", FSkinImage.QUEST_BIG_SWORD, event -> {
+                ThreadUtil.invokeInGameThread(() -> {
+                    QuestUtil.performRelicOffer();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                });
+            }));
             addItem(new FMenuItem("Add Relic", FSkinImage.QUEST_BIG_SWORD, event -> {
                 ThreadUtil.invokeInGameThread(() -> {
                     forge.gamemodes.quest.QuestRelicType relic = forge.gui.util.SGuiChoose.oneOrNone(

@@ -172,6 +172,11 @@ public class QuestWinLoseController {
                     awardAlchemyTable();
                 }
 
+                // Relic offer event
+                if (MyRandom.getRandom().nextFloat() < getEventChance(QPref.RELIC_OFFER_CHANCE)) {
+                    QuestUtil.performRelicOffer();
+                }
+
                 // Relic effects
                 if (qData.getAssets().hasRelic(QuestRelicType.ALCHEMY_KIT)) {
                     awardAlchemyKitExchange();

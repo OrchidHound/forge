@@ -673,12 +673,6 @@ public class QuestUtil {
 
             final RegisteredPlayer aiStart = getRegisteredPlayerByVariant(event.getEventDeck());
 
-            if (event instanceof QuestBossEvent) {
-                final int handBonus = (((QuestBossEvent) event).getBossNumber() - 1) / 2;
-                if (handBonus > 0) {
-                    aiStart.setStartingHand(aiStart.getStartingHand() + handBonus);
-                }
-            }
 
             if (lifeHuman != null) {
                 humanStart.setStartingLife(lifeHuman);
@@ -960,6 +954,67 @@ public class QuestUtil {
                 }
             }
         }
+    }
+
+    /**
+     * Offers the player a choice of three randomly selected relics weighted by rarity.
+     * Relics already at max copies are excluded. No relic appears twice in the same offer.
+     */
+    public static void performRelicOffer() {
+        final QuestController quest = FModel.getQuest();
+        final QuestAssets assets = quest.getAssets();
+
+        // Build candidate pool: relics the player can still acquire
+        final List<QuestRelicType> candidates = new ArrayList<>();
+        for (final QuestRelicType relic : QuestRelicType.values()) {
+            if (assets.getRelicCount(relic) < relic.getMaxCopies()) {
+                candidates.add(relic);
+            }
+        }
+        if (candidates.isEmpty()) { return; }
+
+        // Pick up to 3 distinct relics weighted by rarity
+        final List<QuestRelicType> offered = new ArrayList<>();
+        final List<QuestRelicType> pool = new ArrayList<>(candidates);
+        for (int i = 0; i < 3 && !pool.isEmpty(); i++) {
+            final QuestRelicType pick = rollRelicByRarity(pool);
+            offered.add(pick);
+            pool.remove(pick);
+        }
+
+        // Build display strings: "[Rarity] Name — Description"
+        final List<String> displayStrings = new ArrayList<>();
+        for (final QuestRelicType relic : offered) {
+            displayStrings.add("[" + relic.getRarity() + "] " + relic.getDisplayName()
+                    + " — " + relic.getDescription());
+        }
+
+        final String chosen = SGuiChoose.oneOrNone(
+                "A relic has appeared! Choose one to add to your collection:", displayStrings);
+        if (chosen != null) {
+            acquireRelic(offered.get(displayStrings.indexOf(chosen)));
+        }
+    }
+
+    private static QuestRelicType rollRelicByRarity(final List<QuestRelicType> pool) {
+        final float roll = MyRandom.getRandom().nextFloat();
+        final String rarity;
+        if (roll < 0.60f)      rarity = "Common";
+        else if (roll < 0.85f) rarity = "Uncommon";
+        else if (roll < 0.99f) rarity = "Rare";
+        else                   rarity = "Mythic";
+
+        final List<QuestRelicType> rarityPool = new ArrayList<>();
+        for (final QuestRelicType r : pool) {
+            if (r.getRarity().equals(rarity)) {
+                rarityPool.add(r);
+            }
+        }
+        if (!rarityPool.isEmpty()) {
+            return rarityPool.get(MyRandom.getRandom().nextInt(rarityPool.size()));
+        }
+        // Fallback: pick from any available rarity if none of the target rarity remain
+        return pool.get(MyRandom.getRandom().nextInt(pool.size()));
     }
 
     /**
