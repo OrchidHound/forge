@@ -145,7 +145,7 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     forge.gamemodes.quest.QuestRelicType relic = forge.gui.util.SGuiChoose.oneOrNone(
                         "Choose a relic to add:", java.util.Arrays.asList(forge.gamemodes.quest.QuestRelicType.values()));
                     if (relic != null) {
-                        FModel.getQuest().getAssets().addRelic(relic);
+                        QuestUtil.acquireRelic(relic);
                         FModel.getQuest().save();
                         FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
                     }

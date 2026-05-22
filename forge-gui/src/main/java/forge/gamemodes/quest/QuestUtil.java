@@ -922,6 +922,33 @@ public class QuestUtil {
     }
 
     /**
+     * Central relic acquisition method. Adds the relic to the player's assets and
+     * triggers any on-acquire effects (e.g. Collector's Codex card pick).
+     */
+    public static void acquireRelic(final QuestRelicType relic) {
+        final QuestController quest = FModel.getQuest();
+        final QuestAssets assets = quest.getAssets();
+
+        final int countBefore = assets.getRelicCount(relic);
+        assets.addRelic(relic);
+        final int copiesAdded = assets.getRelicCount(relic) - countBefore;
+
+        if (relic == QuestRelicType.COLLECTORS_CODEX) {
+            final List<PaperCard> pool = quest.getCards().getQuestCardPoolList();
+            pool.sort(Comparator.comparing(PaperCard::getName));
+            for (int i = 0; i < copiesAdded; i++) {
+                final PaperCard chosen = GuiBase.getInterface().chooseCard(
+                        "Collector's Codex",
+                        "Choose a card from the quest pool to add to your collection:",
+                        pool);
+                if (chosen != null) {
+                    quest.getCards().addSingleCard(chosen, 1);
+                }
+            }
+        }
+    }
+
+    /**
      * Test helper: directly triggers the alchemy table event.
      */
     public static List<PaperCard> triggerAlchemyTableTest() {

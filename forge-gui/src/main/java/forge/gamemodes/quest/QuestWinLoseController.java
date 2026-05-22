@@ -184,6 +184,32 @@ public class QuestWinLoseController {
                     }
                 }
 
+                // Victory Purse relic
+                final int victoryPurseCount = qData.getAssets().getRelicCount(QuestRelicType.VICTORY_PURSE);
+                if (victoryPurseCount > 0) {
+                    final long bonus = victoryPurseCount * 50L;
+                    qData.getAssets().addCredits(bonus);
+                    view.showMessage("Victory Purse: You received " + bonus + " bonus credits!", "Victory Purse", FSkinProp.ICO_QUEST_COIN);
+                }
+
+                // Crushing Blow relic
+                final int crushingBlowCount = qData.getAssets().getRelicCount(QuestRelicType.CRUSHING_BLOW);
+                if (crushingBlowCount > 0) {
+                    int lowestOpponentLife = Integer.MAX_VALUE;
+                    for (final PlayerView p : lastGame.getPlayers()) {
+                        if (p != questPlayer) {
+                            lowestOpponentLife = Math.min(lowestOpponentLife, p.getLife());
+                        }
+                    }
+                    if (lowestOpponentLife <= -20) {
+                        final int bonusCount = crushingBlowCount * 3;
+                        final List<PaperCard> bonusCards = qData.getCards().addRandomCards(bonusCount, PaperCardPredicates.IS_RARE_OR_MYTHIC);
+                        if (!bonusCards.isEmpty()) {
+                            view.showCards("Crushing Blow: You received " + bonusCount + " bonus rare card" + (bonusCount > 1 ? "s" : "") + "!", bonusCards);
+                        }
+                    }
+                }
+
                 // Wandering Invitation relic
                 final int invitationCount = qData.getAssets().getRelicCount(QuestRelicType.WANDERING_INVITATION);
                 if (invitationCount > 0 && qData.getAchievements().tryAwardBonusDraft(invitationCount)) {

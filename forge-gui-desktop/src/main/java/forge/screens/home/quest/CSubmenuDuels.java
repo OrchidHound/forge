@@ -259,7 +259,7 @@ public enum CSubmenuDuels implements ICDoc {
 					forge.gamemodes.quest.QuestRelicType relic = forge.gui.util.SGuiChoose.oneOrNone(
 						"Choose a relic to add:", java.util.Arrays.asList(forge.gamemodes.quest.QuestRelicType.values()));
 					if (relic != null) {
-						FModel.getQuest().getAssets().addRelic(relic);
+						forge.gamemodes.quest.QuestUtil.acquireRelic(relic);
 						FModel.getQuest().save();
 						CSubmenuDuels.this.update();
 					}

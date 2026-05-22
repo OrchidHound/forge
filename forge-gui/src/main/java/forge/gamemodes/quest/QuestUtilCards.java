@@ -200,6 +200,13 @@ public final class QuestUtilCards {
     }
 
     /**
+     * @return all cards eligible for quest rewards as a list (for player-facing card pickers).
+     */
+    public List<PaperCard> getQuestCardPoolList() {
+        return getQuestCardPool().collect(Collectors.toList());
+    }
+
+    /**
      * @return a stream of cards that can be rewarded according to the quest format and preferences.
      */
     private Stream<PaperCard> getQuestCardPool() {

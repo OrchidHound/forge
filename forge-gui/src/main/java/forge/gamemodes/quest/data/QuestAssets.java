@@ -83,8 +83,13 @@ public class QuestAssets {
 
     public final void addRelic(final QuestRelicType relic) {
         if (relics == null) { relics = new ArrayList<>(); }
-        if (relic.allowMultiple() || !relics.contains(relic)) {
-            relics.add(relic);
+        if (getRelicCount(relic) >= relic.getMaxCopies()) { return; }
+        relics.add(relic);
+        if (relic.getMaxCopies() > 1 && relic != QuestRelicType.ECHOING_SEAL) {
+            final int bonusCopies = getRelicCount(QuestRelicType.ECHOING_SEAL);
+            for (int i = 0; i < bonusCopies && getRelicCount(relic) < relic.getMaxCopies(); i++) {
+                relics.add(relic);
+            }
         }
     }
 

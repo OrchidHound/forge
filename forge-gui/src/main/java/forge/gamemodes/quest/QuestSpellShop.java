@@ -48,7 +48,14 @@ public class QuestSpellShop {
 
     public static int getEffectiveCardValue(final InventoryItem item) {
         int base = getCardValue(item);
-        return specialShopActive ? Math.max(1, base / 10) : base;
+        if (specialShopActive) {
+            return Math.max(1, base / 10);
+        }
+        final int hagglerCount = FModel.getQuest().getAssets().getRelicCount(QuestRelicType.HAGGLERS_COIN);
+        if (hagglerCount > 0) {
+            base = Math.max(1, (int) (base * (1.0 - hagglerCount * 0.05)));
+        }
+        return base;
     }
 
     public static Integer getCardValue(final InventoryItem card) {
@@ -146,8 +153,8 @@ public class QuestSpellShop {
         return value;
     }
 
-    public static final Function<Entry<InventoryItem, Integer>, Comparable<?>> fnPriceCompare = from -> getCardValue(from.getKey());
-    public static final Function<Entry<? extends InventoryItem, Integer>, Object> fnPriceGet = from -> getCardValue(from.getKey());
+    public static final Function<Entry<InventoryItem, Integer>, Comparable<?>> fnPriceCompare = from -> getEffectiveCardValue(from.getKey());
+    public static final Function<Entry<? extends InventoryItem, Integer>, Object> fnPriceGet = from -> getEffectiveCardValue(from.getKey());
     public static final Function<Entry<? extends InventoryItem, Integer>, Object> fnPriceSellGet = from -> Math.max((int) (multiplier * getCardValue(from.getKey())), 1);
     public static final Function<Entry<InventoryItem, Integer>, Comparable<?>> fnDeckCompare = from -> decksUsingMyCards.count(from.getKey());
     public static final Function<Entry<? extends InventoryItem, Integer>, Object> fnDeckGet = from -> Integer.toString(decksUsingMyCards.count(from.getKey()));
