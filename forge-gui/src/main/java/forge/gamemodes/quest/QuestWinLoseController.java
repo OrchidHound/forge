@@ -575,6 +575,7 @@ public class QuestWinLoseController {
         final String moodRingColor = qData.getAssets().hasRelic(QuestRelicType.MOOD_RING)
                 ? qData.getAssets().getRelicData(QuestRelicType.MOOD_RING) : null;
         final boolean moodRingActive = moodRingColor != null && !moodRingColor.isEmpty();
+        final int premiumPacksCount = qData.getAssets().getRelicCount(QuestRelicType.PREMIUM_PACKS);
 
         String title;
         if (qData.getFormat() == null) {
@@ -600,6 +601,9 @@ public class QuestWinLoseController {
                         selected.getFilterPrinted().and(c -> colorMatchesMoodRing(c, moodRingColor)));
             } else {
                 cardsWon = qData.getCards().generateQuestBooster(selected.getFilterPrinted());
+            }
+            if (premiumPacksCount > 0) {
+                cardsWon.addAll(qData.getCards().generateCards(premiumPacksCount, PaperCardPredicates.IS_RARE_OR_MYTHIC));
             }
             qData.getCards().addAllCards(cardsWon);
 
@@ -671,6 +675,9 @@ public class QuestWinLoseController {
                 cardsWon = product.get();
             }
 
+            if (premiumPacksCount > 0) {
+                cardsWon.addAll(qData.getCards().generateCards(premiumPacksCount, PaperCardPredicates.IS_RARE_OR_MYTHIC));
+            }
             qData.getCards().addAllCards(cardsWon);
             title = Localizer.getInstance().getMessage("lblBonusSetBoosterPack", chooseEd.getName());
 
@@ -683,11 +690,10 @@ public class QuestWinLoseController {
     }
 
     private SealedTemplate getBoosterTemplate() {
-        final int bonusRares = qData.getAssets().getRelicCount(QuestRelicType.PREMIUM_PACKS);
         return new SealedTemplate(List.of(
                 Pair.of(BoosterSlots.COMMON, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_COMMONS)),
                 Pair.of(BoosterSlots.UNCOMMON, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_UNCOMMONS)),
-                Pair.of(BoosterSlots.RARE_MYTHIC, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_RARES) + bonusRares)
+                Pair.of(BoosterSlots.RARE_MYTHIC, FModel.getQuestPreferences().getPrefInt(QPref.BOOSTER_RARES))
         ));
     }
 

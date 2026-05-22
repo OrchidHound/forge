@@ -242,6 +242,10 @@ public final class QuestUtilCards {
         return newCards;
     }
 
+    public List<PaperCard> generateCards(final int n, final Predicate<PaperCard> predicate) {
+        return getQuestCardPool().filter(predicate).collect(StreamUtil.random(n));
+    }
+
     /**
      * Generates a pool of rare/mythic cards for the special shop event.
      */
