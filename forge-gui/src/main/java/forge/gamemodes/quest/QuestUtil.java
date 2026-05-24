@@ -790,7 +790,7 @@ public class QuestUtil {
             SOptionPane.showErrorDialog("Your quest run has ended. You were defeated by a Boss.\nStart a new quest to play again.", "Quest Run Over");
             return false;
         }
-        if (achievements != null && achievements.isBossEventPending() && !(event instanceof QuestBossEvent)) {
+        if (achievements != null && achievements.isBossEventPending() && !(event instanceof QuestBossEvent) && !(event instanceof QuestEventChallenge)) {
             SOptionPane.showErrorDialog("A Boss encounter is waiting! You must defeat the Boss before continuing your quest.", "Boss Encounter");
             return false;
         }
@@ -999,8 +999,8 @@ public class QuestUtil {
     private static QuestRelicType rollRelicByRarity(final List<QuestRelicType> pool) {
         final float roll = MyRandom.getRandom().nextFloat();
         final String rarity;
-        if (roll < 0.60f)      rarity = "Common";
-        else if (roll < 0.85f) rarity = "Uncommon";
+        if (roll < 0.65f)      rarity = "Common";
+        else if (roll < 0.9f) rarity = "Uncommon";
         else if (roll < 0.99f) rarity = "Rare";
         else                   rarity = "Mythic";
 

@@ -92,7 +92,12 @@ public class QuestEventCommanderDuelManager implements QuestEventDuelManagerInte
                 return Collections.emptyList();
             }
             if (FModel.getQuest().getAchievements().isBossEventPending()) {
-                return generateCommanderBossEncounter();
+                List<QuestEventDuel> cached = FModel.getQuest().getAchievements().getCachedBossEncounterList();
+                if (cached == null) {
+                    cached = generateCommanderBossEncounter();
+                    FModel.getQuest().getAchievements().setCachedBossEncounterList(cached);
+                }
+                return cached;
             }
         }
 
@@ -208,7 +213,18 @@ public class QuestEventCommanderDuelManager implements QuestEventDuelManagerInte
         final boolean isFinalBoss = regularEventsPlayed >= 120;
         final int bossNumber = regularEventsPlayed / 20;
 
-        QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber);
+        final QuestEventDifficulty targetDifficulty;
+        if (isFinalBoss) {
+            targetDifficulty = QuestEventDifficulty.EXPERT;
+        } else if (bossNumber <= 2) {
+            targetDifficulty = QuestEventDifficulty.MEDIUM;
+        } else if (bossNumber <= 4) {
+            targetDifficulty = QuestEventDifficulty.HARD;
+        } else {
+            targetDifficulty = QuestEventDifficulty.EXPERT;
+        }
+
+        QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber, targetDifficulty);
 
         if (!commanderDuels.isEmpty()) {
             QuestEventCommanderDuel sourceDuel = (QuestEventCommanderDuel) commanderDuels.get(

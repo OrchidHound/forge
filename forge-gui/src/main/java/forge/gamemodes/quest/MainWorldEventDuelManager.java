@@ -109,7 +109,12 @@ public class MainWorldEventDuelManager implements QuestEventDuelManagerInterface
         }
 
         if (FModel.getQuest().getAchievements().isBossEventPending()) {
-            return QuestBossEvent.createBossEncounterList(this);
+            List<QuestEventDuel> cached = FModel.getQuest().getAchievements().getCachedBossEncounterList();
+            if (cached == null) {
+                cached = QuestBossEvent.createBossEncounterList(this);
+                FModel.getQuest().getAchievements().setCachedBossEncounterList(cached);
+            }
+            return cached;
         }
 
         final QuestPreferences questPreferences = FModel.getQuestPreferences();

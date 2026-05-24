@@ -754,6 +754,8 @@ public class QuestWinLoseController {
         view.showMessage(Localizer.getInstance().getMessage("lblChallengeCompletedBountyIS", String.valueOf(questRewardCredits)), Localizer.getInstance().getMessage("lblChallengeRewardsForEvent", qEvent.getTitle()), FSkinProp.ICO_QUEST_BOX);
 
         awardSpecialReward(null);
+
+        QuestUtil.performRelicOffer();
     }
 
     /**

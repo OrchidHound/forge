@@ -41,6 +41,7 @@ public class QuestAchievements {
     private boolean bossEventPending = false;
     private boolean questCompleted = false;
     private boolean questRunOver = false;
+    private List<String> usedBossDeckNames = new ArrayList<>();
 
     private int firstPlaceDraftFinishes = 0;
     private int secondPlaceDraftFinishes = 0;
@@ -51,6 +52,7 @@ public class QuestAchievements {
     private int difficulty;
 
     private transient QuestDraftFormat nextDraftFormat;
+    private transient List<forge.gamemodes.quest.QuestEventDuel> cachedBossEncounterList = null;
 
     public QuestAchievements() { //needed for XML serialization
     }
@@ -189,35 +191,63 @@ public class QuestAchievements {
         regularEventsPlayed++;
         int freq = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
         if (regularEventsPlayed % freq == 0) {
-            bossEventPending = true;
+            setBossEventPending(true);
         }
     }
 
     public boolean isBossEventPending() { return bossEventPending; }
-    public void setBossEventPending(boolean pending) { bossEventPending = pending; }
+    public void setBossEventPending(boolean pending) {
+        bossEventPending = pending;
+        cachedBossEncounterList = null;
+    }
+
+    public List<forge.gamemodes.quest.QuestEventDuel> getCachedBossEncounterList() { return cachedBossEncounterList; }
+    public void setCachedBossEncounterList(List<forge.gamemodes.quest.QuestEventDuel> list) { cachedBossEncounterList = list; }
+
     public boolean isQuestCompleted() { return questCompleted; }
-    public void setQuestCompleted(boolean completed) { questCompleted = completed; }
+    public void setQuestCompleted(boolean completed) {
+        questCompleted = completed;
+        if (completed) {
+            if (usedBossDeckNames == null) { usedBossDeckNames = new ArrayList<>(); }
+            else { usedBossDeckNames.clear(); }
+        }
+    }
     public boolean isQuestRunOver() { return questRunOver; }
     public void setQuestRunOver(boolean over) { questRunOver = over; }
+
+    public List<String> getUsedBossDeckNames() {
+        if (usedBossDeckNames == null) { usedBossDeckNames = new ArrayList<>(); }
+        return usedBossDeckNames;
+    }
+    public void addUsedBossDeckName(String name) {
+        if (usedBossDeckNames == null) { usedBossDeckNames = new ArrayList<>(); }
+        usedBossDeckNames.add(name);
+    }
 
     // Debug helpers for testing boss encounters
     public void debugTriggerBoss() {
         int freq = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
         regularEventsPlayed = freq;
-        bossEventPending = true;
         questRunOver = false;
+        setBossEventPending(true);
     }
 
     public void debugTriggerFinalBoss() {
         int freq = FModel.getQuestPreferences().getPrefInt(DifficultyPrefs.BOSS_ENCOUNTER_FREQUENCY, difficulty);
         regularEventsPlayed = freq * 6;
-        bossEventPending = true;
         questRunOver = false;
+        setBossEventPending(true);
     }
 
     public void debugResetQuestRun() {
         questRunOver = false;
-        bossEventPending = false;
+        if (usedBossDeckNames != null) { usedBossDeckNames.clear(); }
+        setBossEventPending(false);
+    }
+
+    public void debugResetChallenges() {
+        if (currentChallenges != null) { currentChallenges.clear(); }
+        challengesPlayed = 0;
     }
 
     // Level, read-only ( note: it increments in addWin() )

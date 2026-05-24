@@ -621,6 +621,26 @@ public class QuestController {
         save();
     }
 
+    public void debugAddChallenge() {
+        final QuestAchievements achievements = model.getAchievements();
+        final List<String> availableChallengeIds = achievements.getCurrentChallenges();
+        final List<String> candidateIds = new ArrayList<>();
+        for (final QuestEventChallenge qc : allChallenges) {
+            if (!qc.isRepeatable() && achievements.getLockedChallenges().contains(qc.getId())) {
+                continue;
+            }
+            if (!availableChallengeIds.contains(qc.getId())) {
+                candidateIds.add(qc.getId());
+            }
+        }
+        if (!candidateIds.isEmpty()) {
+            Collections.shuffle(candidateIds);
+            availableChallengeIds.add(candidateIds.get(0));
+            achievements.setCurrentChallenges(availableChallengeIds);
+            save();
+        }
+    }
+
     public CardEdition getDefaultLandSet() {
         List<CardEdition> availableEditions = getAvailableLandSets();
 

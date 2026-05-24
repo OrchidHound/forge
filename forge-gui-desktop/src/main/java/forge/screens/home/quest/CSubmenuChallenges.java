@@ -157,6 +157,29 @@ public enum CSubmenuChallenges implements ICDoc {
         }
         view.getPnlChallenges().add(grpPanel, "w 100%!");
 
+        final javax.swing.JButton btnTest = new javax.swing.JButton("[Test]");
+        btnTest.addActionListener(e -> {
+            javax.swing.JPopupMenu testMenu = new javax.swing.JPopupMenu();
+
+            javax.swing.JMenuItem itemResetChallenges = new javax.swing.JMenuItem("Reset Challenges");
+            itemResetChallenges.addActionListener(ae -> {
+                qCtrl.getAchievements().debugResetChallenges();
+                FModel.getQuest().save();
+                CSubmenuChallenges.this.update();
+            });
+            testMenu.add(itemResetChallenges);
+
+            javax.swing.JMenuItem itemAddChallenge = new javax.swing.JMenuItem("Add Challenge");
+            itemAddChallenge.addActionListener(ae -> {
+                qCtrl.debugAddChallenge();
+                CSubmenuChallenges.this.update();
+            });
+            testMenu.add(itemAddChallenge);
+
+            testMenu.show(btnTest, 0, btnTest.getHeight());
+        });
+        view.getPnlChallenges().add(btnTest, "gaptop 12px");
+
         if (!haveAnyChallenges) {
             final FLabel lbl = new FLabel.Builder()
             .text(VSubmenuChallenges.SINGLETON_INSTANCE.getLblNextChallengeInWins().getText())

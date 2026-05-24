@@ -110,6 +110,7 @@ public class QuestPrefsScreen extends FScreen {
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblStartingSnowLands"), QPref.STARTING_SNOW_LANDS, PrefsGroup.DIFFICULTY_ALL));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblColorBias"), QPref.STARTING_POOL_COLOR_BIAS, PrefsGroup.DIFFICULTY_ALL));
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblPenaltyforLoss"), QPref.PENALTY_LOSS, PrefsGroup.DIFFICULTY_ALL));
+        scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWinsforNewChallenge"), QPref.WINS_NEW_CHALLENGE, PrefsGroup.DIFFICULTY_ALL));
 
         //wild opponents addon
         scroller.add(new PrefsOption(Forge.getLocalizer().getMessage("lblWildOpponentMultiplier"), QPref.WILD_OPPONENTS_MULTIPLIER, PrefsGroup.DIFFICULTY_ALL));

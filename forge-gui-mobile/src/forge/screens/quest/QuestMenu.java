@@ -158,6 +158,19 @@ public class QuestMenu extends FPopupMenu implements IVQuestStats {
                     }
                 });
             }));
+            addItem(new FMenuItem("Reset Challenges", FSkinImage.QUEST_NOTES, event -> {
+                if (FModel.getQuest().getAchievements() != null) {
+                    FModel.getQuest().getAchievements().debugResetChallenges();
+                    FModel.getQuest().save();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
+            addItem(new FMenuItem("Add Challenge", FSkinImage.QUEST_NOTES, event -> {
+                if (FModel.getQuest().getAchievements() != null) {
+                    FModel.getQuest().debugAddChallenge();
+                    FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);
+                }
+            }));
             addItem(new FMenuItem("Reset Special Shop", FSkinImage.QUEST_BOOK, event -> {
                 QuestSpellShop.clearSpecialShop();
                 FThreads.invokeInEdtLater(QuestMenu::updateCurrentQuestScreen);

@@ -16,11 +16,11 @@ public class QuestBossEvent extends QuestEventDuel {
     private final boolean finalBoss;
     private final int bossNumber;
 
-    public QuestBossEvent(boolean finalBoss, int bossNumber) {
+    public QuestBossEvent(boolean finalBoss, int bossNumber, QuestEventDifficulty targetDifficulty) {
         super();
         this.finalBoss = finalBoss;
         this.bossNumber = bossNumber;
-        setDifficulty(QuestEventDifficulty.EXPERT);
+        setDifficulty(targetDifficulty);
         setShowDifficulty(false);
         if (finalBoss) {
             setTitle("The Final Boss");
@@ -50,10 +50,24 @@ public class QuestBossEvent extends QuestEventDuel {
         final int bossNumber = regularEventsPlayed / frequency;
         final boolean isFinalBoss = bossNumber >= 6;
 
-        QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber);
+        // Scale difficulty by boss number
+        final QuestEventDifficulty targetDifficulty;
+        if (isFinalBoss) {
+            targetDifficulty = QuestEventDifficulty.EXPERT;
+        } else if (bossNumber <= 2) {
+            targetDifficulty = QuestEventDifficulty.MEDIUM;
+        } else if (bossNumber <= 4) {
+            targetDifficulty = QuestEventDifficulty.HARD;
+        } else {
+            targetDifficulty = QuestEventDifficulty.EXPERT;
+        }
+
+        QuestBossEvent bossEvent = new QuestBossEvent(isFinalBoss, bossNumber, targetDifficulty);
+
+        final List<String> usedDecks = FModel.getQuest().getAchievements().getUsedBossDeckNames();
 
         // Build pool from the dedicated bosses folder
-        final List<QuestEventDuel> bossPool = new ArrayList<>();
+        final List<QuestEventDuel> fullPool = new ArrayList<>();
         final File bossDir = new File(ForgeConstants.DEFAULT_BOSS_DUELS_DIR);
         if (bossDir.exists() && bossDir.isDirectory()) {
             final QuestDuelReader reader = new QuestDuelReader(bossDir);
@@ -61,14 +75,25 @@ public class QuestBossEvent extends QuestEventDuel {
                 if (d.getEventDeck() == null || d.getEventDeck().getMain().isEmpty()) {
                     continue;
                 }
-                if (isFinalBoss && !d.isFinalBossDeck()) {
+                if (isFinalBoss != d.isFinalBossDeck()) {
                     continue;
                 }
-                if (!isFinalBoss && d.isFinalBossDeck()) {
+                if (!isFinalBoss && d.getDifficulty() != targetDifficulty) {
                     continue;
                 }
+                fullPool.add(d);
+            }
+        }
+
+        // Prefer unused decks; fall back to full pool if all have been used
+        List<QuestEventDuel> bossPool = new ArrayList<>();
+        for (QuestEventDuel d : fullPool) {
+            if (!usedDecks.contains(d.getEventDeck().getName())) {
                 bossPool.add(d);
             }
+        }
+        if (bossPool.isEmpty()) {
+            bossPool = fullPool;
         }
 
         QuestEventDuel bossSource = null;
@@ -107,6 +132,8 @@ public class QuestBossEvent extends QuestEventDuel {
             final String opponentName = bossSource.getOpponentName() != null
                     ? bossSource.getOpponentName() : bossSource.getTitle();
             bossEvent.setOpponentName(opponentName);
+            FModel.getQuest().getAchievements().addUsedBossDeckName(bossSource.getEventDeck().getName());
+            FModel.getQuest().save();
         }
 
         return Collections.singletonList(bossEvent);
