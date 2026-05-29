@@ -13,6 +13,7 @@ import forge.deck.DeckGroup;
 import forge.game.GameFormat;
 import forge.gamemodes.quest.QuestController;
 import forge.gamemodes.quest.QuestMode;
+import forge.gamemodes.quest.QuestPlaneswalker;
 import forge.gamemodes.quest.QuestUtil;
 import forge.gamemodes.quest.QuestWorld;
 import forge.gamemodes.quest.StartingPoolPreferences;
@@ -114,6 +115,11 @@ public class NewQuestScreen extends FScreen {
             return new ScrollBounds(visibleWidth, y);
         }
     });
+
+    @SuppressWarnings("unused")
+    private final FLabel lblPlaneswalker = scroller.add(new FLabel.Builder().text("Planeswalker:").build());
+    private final FComboBox<QuestPlaneswalker> cbxPlaneswalker = scroller.add(new FComboBox<>());
+    private final FLabel lblPlaneswalkerDesc = scroller.add(new FLabel.Builder().font(FSkinFont.get(11)).text("").build());
 
     @SuppressWarnings("unused")
     private final FLabel lblStartingWorld = scroller.add(new FLabel.Builder().text(Forge.getLocalizer().getMessage("lblStartingWorld") + ":").build());
@@ -309,6 +315,19 @@ public class NewQuestScreen extends FScreen {
             cbxStartingWorld.setSelectedItem(FModel.getWorlds().get("Random Commander"));
         });
 
+        cbxPlaneswalker.addItem(QuestPlaneswalker.NONE);
+        cbxPlaneswalker.addItem(QuestPlaneswalker.CHANDRA);
+        cbxPlaneswalker.addItem(QuestPlaneswalker.ELSPETH);
+        cbxPlaneswalker.addItem(QuestPlaneswalker.JACE);
+        lblPlaneswalkerDesc.setVisible(false);
+        cbxPlaneswalker.setChangedHandler(event -> {
+            QuestPlaneswalker pw = cbxPlaneswalker.getSelectedItem();
+            String desc = pw != null ? pw.getDescription() : "";
+            lblPlaneswalkerDesc.setText(desc);
+            lblPlaneswalkerDesc.setVisible(!desc.isEmpty());
+            scroller.revalidate();
+        });
+
     }
 
     private void updateStartingPoolOptions() {
@@ -429,6 +448,11 @@ public class NewQuestScreen extends FScreen {
         return cbFantasy.isSelected();
     }
     public boolean isCommander() { return cbCommander.isSelected(); }
+
+    public QuestPlaneswalker getSelectedPlaneswalker() {
+        QuestPlaneswalker pw = cbxPlaneswalker.getSelectedItem();
+        return pw != null ? pw : QuestPlaneswalker.NONE;
+    }
 
     public PoolType getPoolType() {
         if (radSurpriseMe.isSelected()) {
@@ -603,7 +627,7 @@ public class NewQuestScreen extends FScreen {
 
             DeckConstructionRules dcr = isCommander() ?  DeckConstructionRules.Commander: DeckConstructionRules.Default;
 
-            qc.newGame(questName, getSelectedDifficulty(), mode, fmtPrizes, isUnlockSetsAllowed(), dckStartPool, fmtStartPool, getStartingWorldName(), userPrefs, dcr);
+            qc.newGame(questName, getSelectedDifficulty(), mode, fmtPrizes, isUnlockSetsAllowed(), dckStartPool, fmtStartPool, getStartingWorldName(), userPrefs, dcr, getSelectedPlaneswalker());
             qc.save();
 
             // Save in preferences.

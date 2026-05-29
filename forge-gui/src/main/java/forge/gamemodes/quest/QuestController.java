@@ -287,9 +287,9 @@ public class QuestController {
             final GameFormat formatPrizes, final boolean allowSetUnlocks,
             final Deck startingCards, final GameFormat formatStartingPool,
             final String startingWorld, final StartingPoolPreferences userPrefs,
-            DeckConstructionRules dcr) {
+            DeckConstructionRules dcr, QuestPlaneswalker planeswalker) {
 
-        this.load(new QuestData(name, difficulty, mode, formatPrizes, allowSetUnlocks, startingWorld, dcr)); // pass awards and unlocks here
+        this.load(new QuestData(name, difficulty, mode, formatPrizes, allowSetUnlocks, startingWorld, dcr, planeswalker)); // pass awards and unlocks here
 
         if (startingCards != null) {
             this.myCards.addDeck(startingCards);
@@ -548,14 +548,21 @@ public class QuestController {
         this.activeGame = game;
     }
 
+    public QuestPlaneswalker getPlaneswalker() {
+        return model == null ? QuestPlaneswalker.NONE : model.getQuestPlaneswalker();
+    }
+
     @Subscribe
     public void receiveGameEvent(GameEvent ev) { // Receives events only during quest games
         if (ev instanceof GameEventMulligan mev && activeGame != null) {
-            // First mulligan is free
             Player player = activeGame.getPlayer(mev.player());
-            if (player != null && player.getLobbyPlayer().equals(GamePlayerUtil.getGuiPlayer())
-                    && getAssets().hasItem(QuestItemType.SLEIGHT) && player.getStats().getMulliganCount() < 7) {
-                player.drawCard();
+            if (player != null && player.getLobbyPlayer().equals(GamePlayerUtil.getGuiPlayer())) {
+                if (getAssets().hasItem(QuestItemType.SLEIGHT) && player.getStats().getMulliganCount() < 7) {
+                    player.drawCard();
+                } else if (getPlaneswalker() == QuestPlaneswalker.ELSPETH && player.getStats().getMulliganCount() == 0) {
+                    // Elspeth: 1 free mulligan per game (draw an extra card on the first mulligan)
+                    player.drawCard();
+                }
             }
         }
     }

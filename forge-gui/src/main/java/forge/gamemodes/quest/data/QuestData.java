@@ -24,6 +24,7 @@ import java.util.Map;
 
 import forge.game.GameFormat;
 import forge.gamemodes.quest.QuestMode;
+import forge.gamemodes.quest.QuestPlaneswalker;
 import forge.gamemodes.quest.io.QuestDataIO;
 import forge.localinstance.properties.ForgeConstants;
 import forge.model.FModel;
@@ -75,6 +76,8 @@ public class QuestData {
      */
     public DeckConstructionRules deckConstructionRules = DeckConstructionRules.Default;
 
+    public QuestPlaneswalker questPlaneswalker = QuestPlaneswalker.NONE;
+
     public QuestData() { //needed for XML serialization
     }
 
@@ -96,7 +99,8 @@ public class QuestData {
      *      deck construction rules e.g. Commander
      */
     public QuestData(String name0, int diff, QuestMode mode0, GameFormat userFormat,
-                     boolean allowSetUnlocks, final String startingWorld, DeckConstructionRules dcr) {
+                     boolean allowSetUnlocks, final String startingWorld, DeckConstructionRules dcr,
+                     QuestPlaneswalker planeswalker) {
         this.name = name0;
 
         if (userFormat != null) {
@@ -107,6 +111,7 @@ public class QuestData {
         this.assets = new QuestAssets(format);
         this.worldId = startingWorld;
         this.deckConstructionRules = dcr;
+        this.questPlaneswalker = planeswalker != null ? planeswalker : QuestPlaneswalker.NONE;
     }
 
     /**
@@ -223,4 +228,8 @@ public class QuestData {
 
     public void setMatchLength(int len) { matchLength = len; }
     public int getMatchLength() { return matchLength; }
+
+    public QuestPlaneswalker getQuestPlaneswalker() {
+        return questPlaneswalker == null ? QuestPlaneswalker.NONE : questPlaneswalker;
+    }
 }

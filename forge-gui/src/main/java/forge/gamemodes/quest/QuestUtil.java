@@ -686,6 +686,11 @@ public class QuestUtil {
                 humanStart.setStartingHand(humanStart.getStartingHand() + hugeMittsCount);
             }
 
+            // Jace planeswalker: +1 starting hand and +1 max hand size
+            if (qData.getPlaneswalker() == QuestPlaneswalker.JACE) {
+                humanStart.setStartingHand(humanStart.getStartingHand() + 1);
+            }
+
             // Half-life gambit offer
             halfLifeHandicapActive = false;
             float halfLifeGambitChance = FModel.getQuestPreferences().getPrefInt(QuestPreferences.QPref.HALF_LIFE_GAMBIT_CHANCE) / 1000f;
@@ -823,7 +828,10 @@ public class QuestUtil {
         String errorMessage = GameType.Quest.getDeckFormat().getDeckConformanceProblem(deck);
         if (errorMessage != null && errorMessage.startsWith("should have at least")) {
             final int grimCount = FModel.getQuest().getAssets().getRelicCount(QuestRelicType.COMPACT_GRIMOIRE);
-            final int effectiveMin = 40 - grimCount;
+            int effectiveMin = 40 - grimCount;
+            if (FModel.getQuest().getPlaneswalker() == QuestPlaneswalker.CHANDRA) {
+                effectiveMin = Math.min(effectiveMin, 30);
+            }
             if (deck != null && deck.getMain().countAll() >= effectiveMin) {
                 errorMessage = null;
             }

@@ -248,7 +248,7 @@ public enum CSubmenuQuestStart implements ICDoc {
 
         final QuestController qc = FModel.getQuest();
 
-        qc.newGame(questName, difficulty, mode, fmtPrizes, view.isUnlockSetsAllowed(), dckStartPool, fmtStartPool, view.getStartingWorldName(), userPrefs, dcr);
+        qc.newGame(questName, difficulty, mode, fmtPrizes, view.isUnlockSetsAllowed(), dckStartPool, fmtStartPool, view.getStartingWorldName(), userPrefs, dcr, view.getSelectedPlaneswalker());
         FModel.getQuest().save();
 
         // Save in preferences.

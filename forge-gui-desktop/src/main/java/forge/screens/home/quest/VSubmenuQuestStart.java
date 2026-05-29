@@ -13,6 +13,7 @@ import forge.deck.Deck;
 import forge.deck.DeckGroup;
 import forge.game.GameFormat;
 import forge.gamemodes.quest.QuestController;
+import forge.gamemodes.quest.QuestPlaneswalker;
 import forge.gamemodes.quest.QuestWorld;
 import forge.gamemodes.quest.StartingPoolType;
 import forge.gui.framework.DragCell;
@@ -60,6 +61,10 @@ public enum VSubmenuQuestStart implements IVSubmenu<CSubmenuQuestStart> {
     private final FRadioButton radExpert = new FRadioButton(localizer.getMessage("questDifficultyExpert"));
     private final FCheckBox boxFantasy = new FCheckBox(localizer.getMessage("rbFantasyMode"));
     private final FCheckBox boxCommander = new FCheckBox(localizer.getMessage("rbCommanderSubformat"));
+
+    private final FLabel lblPlaneswalker = new FLabel.Builder().text("Planeswalker:").build();
+    private final FComboBoxWrapper<QuestPlaneswalker> cbxPlaneswalker = new FComboBoxWrapper<>();
+    private final FLabel lblPlaneswalkerDesc = new FLabel.Builder().text("").build();
 
     private final FLabel lblStartingWorld = new FLabel.Builder().text(localizer.getMessage("lblStartingWorld") + ":").build();
     private final FComboBoxWrapper<QuestWorld> cbxStartingWorld = new FComboBoxWrapper<>();
@@ -274,6 +279,15 @@ public enum VSubmenuQuestStart implements IVSubmenu<CSubmenuQuestStart> {
 
         );
 
+        cbxPlaneswalker.addItem(QuestPlaneswalker.NONE);
+        cbxPlaneswalker.addItem(QuestPlaneswalker.CHANDRA);
+        cbxPlaneswalker.addItem(QuestPlaneswalker.ELSPETH);
+        cbxPlaneswalker.addItem(QuestPlaneswalker.JACE);
+        cbxPlaneswalker.addActionListener(e -> {
+            QuestPlaneswalker pw = cbxPlaneswalker.getSelectedItem();
+            lblPlaneswalkerDesc.setText(pw != null ? pw.getDescription() : "");
+        });
+
         boxCompleteSet.setEnabled(true);
         boxAllowDuplicates.setEnabled(true);
 
@@ -281,9 +295,12 @@ public enum VSubmenuQuestStart implements IVSubmenu<CSubmenuQuestStart> {
         pnlOptions.setLayout(new MigLayout("insets 0, gap 10px, fillx, wrap 2"));
 
         final JPanel pnlDifficultyMode = new JPanel(new MigLayout("insets 0, gap 1%, flowy"));
+        pnlDifficultyMode.add(lblPlaneswalker, "h 25px!");
+        cbxPlaneswalker.addTo(pnlDifficultyMode, "h 27px!, w 160px!, gapbottom 2");
+        pnlDifficultyMode.add(lblPlaneswalkerDesc, "h 20px!, gapbottom 10, wmax 230px");
         pnlDifficultyMode.add(difficultyPanel, "gapright 4%");
         pnlDifficultyMode.add(boxFantasy, "h 25px!, gapbottom 15, gapright 4%");
-        pnlDifficultyMode.add(boxCommander, "h 25px!, gapbottom 15, gapright 4%");
+        pnlDifficultyMode.add(boxCommander, "h 25px!, gapbottom 7, gapright 4%");
         pnlDifficultyMode.add(lblStartingWorld, "h 25px!, hidemode 3");
         cbxStartingWorld.addTo(pnlDifficultyMode, "h 27px!, w 40%, pushx, gapbottom 7");
         pnlDifficultyMode.setOpaque(false);
@@ -469,6 +486,11 @@ public enum VSubmenuQuestStart implements IVSubmenu<CSubmenuQuestStart> {
 
     public String getStartingWorldName() {
         return cbxStartingWorld.getSelectedItem().toString();
+    }
+
+    public QuestPlaneswalker getSelectedPlaneswalker() {
+        QuestPlaneswalker pw = cbxPlaneswalker.getSelectedItem();
+        return pw != null ? pw : QuestPlaneswalker.NONE;
     }
 
     public boolean isFantasy() {
