@@ -32,6 +32,7 @@ public class QuestAchievements {
     private int draftTokens = 0;
 
     private int win;
+    private int duelWins = 0;
     private int winstreakBest = 0;
     private int winstreakCurrent = 0;
     private int lost;
@@ -113,6 +114,14 @@ public class QuestAchievements {
             winstreakBest = winstreakCurrent;
         }
 
+    }
+
+    public void addDuelWin() {
+        duelWins++;
+    }
+
+    public int getDuelWins() {
+        return duelWins;
     }
 
     // Challenge performance
@@ -246,7 +255,8 @@ public class QuestAchievements {
     }
 
     public void debugResetChallenges() {
-        if (currentChallenges != null) { currentChallenges.clear(); }
+        getCurrentChallenges().clear();
+        if (completedChallenges != null) { completedChallenges.clear(); }
         challengesPlayed = 0;
     }
 

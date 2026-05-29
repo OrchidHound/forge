@@ -589,7 +589,7 @@ public class QuestController {
         }
         availableChallengeIds.removeAll(nonExistentIds);
 
-        int maxChallenges = achievements.getWin() / getTurnsToUnlockChallenge() - achievements.getChallengesPlayed();
+        int maxChallenges = achievements.getDuelWins() / getTurnsToUnlockChallenge() - achievements.getChallengesPlayed();
         if (maxChallenges > 5) {
             maxChallenges = 5;
         }

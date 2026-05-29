@@ -273,7 +273,7 @@ public class QuestUtil {
         final QuestController qData = FModel.getQuest();
         final int challengesPlayed = qData.getAchievements().getChallengesPlayed();
 
-        final int wins = qData.getAchievements().getWin();
+        final int wins = qData.getAchievements().getDuelWins();
         final int turnsToUnlock = FModel.getQuest().getTurnsToUnlockChallenge();
         final int delta;
 

@@ -285,6 +285,9 @@ public class QuestWinLoseController {
             // Regular event: record win/loss and track toward next boss encounter
             if (wonMatch) {
                 qData.getAchievements().addWin();
+                if (!(qEvent instanceof QuestEventChallenge)) {
+                    qData.getAchievements().addDuelWin();
+                }
             } else {
                 qData.getAchievements().addLost();
                 qData.getAssets().subtractCredits(x);
